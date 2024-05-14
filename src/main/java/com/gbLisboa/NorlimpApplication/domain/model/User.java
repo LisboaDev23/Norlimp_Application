@@ -48,8 +48,14 @@ public class User {
     @Valid
     @NotNull
     @NotBlank
-    @OneToMany(mappedBy = "tb_adress")
-    private List<AdressClient> adress;
+    @OneToOne(mappedBy = "adress_id")
+    private AdressClient adress;
+
+    @Valid
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "login_id")
+    private Login login;
 
     @Valid
     @NotNull
@@ -62,11 +68,5 @@ public class User {
     @NotBlank
     @OneToMany(mappedBy = "tb_schedulling")
     private List<Schedulling> schedulling;
-
-    @Valid
-    @NotNull
-    @NotBlank
-    @OneToOne(mappedBy = "tb_feedback")
-    private Feedback feedback;
 
 }
