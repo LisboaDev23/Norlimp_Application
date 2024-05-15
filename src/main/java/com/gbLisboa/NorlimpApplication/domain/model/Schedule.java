@@ -1,11 +1,15 @@
 package com.gbLisboa.NorlimpApplication.domain.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,20 +27,21 @@ public class Schedule {
     private Long id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime date;
+    private List<Date> dates;
 
-    @NotEmpty
-    private Double value;
-
+    @Valid
     @ManyToOne
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "schedule_user_fk"), nullable = false)
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_schedule_user"), nullable = false)
     private User user;
 
-
-    private Service service;
-
+    @Valid
     @ManyToOne
-    @JoinColumn(name = "payment_id", foreignKey = @ForeignKey(name = "schedule_payment_id"), nullable = false)
+    @JoinColumn(name = "payment_id", foreignKey = @ForeignKey(name = "fk_schedule_payment"), nullable = false)
     private Payment payment;
+
+    @Valid
+    @NotBlank
+    @OneToMany
+    private List<Service> serviceRequest;
 
 }

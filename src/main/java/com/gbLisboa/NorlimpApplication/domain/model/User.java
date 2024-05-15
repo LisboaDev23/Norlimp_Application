@@ -19,6 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "tb_user")
 public class User {
+
     @NotNull//(groups = ValidationGroups.UserId.class)
     @EqualsAndHashCode.Include
     @Id
@@ -32,7 +33,7 @@ public class User {
 
     @NotBlank
     @Column(name = "cpf", nullable = false, unique = true, updatable = false)
-    @Size(max = 11)
+    @Size(min = 11,max = 14)
     private String cpf;
 
     @NotBlank
@@ -40,8 +41,7 @@ public class User {
     private LocalDate birthday;
 
     @NotBlank
-    @Column(name = "email", nullable = false, unique = true)
-    @Size(max = 256)
+    @Size(max = 255)
     @Email
     private String email;
 
@@ -52,8 +52,9 @@ public class User {
 
     @Valid
     @NotBlank
-    @OneToOne(mappedBy = "adress_id")
-    private Adress adress;
+    @OneToMany
+    @JoinColumn(name = "adress_id")
+    private List<Adress> adressList;
 
     @Valid
     @NotBlank
@@ -63,13 +64,7 @@ public class User {
 
     @Valid
     @NotBlank
-    @OneToMany(mappedBy = "tb_service")
-    private List<Service> serviceRequest;
-
-    @Valid
-    @NotBlank
     @OneToMany
     @JoinColumn(name = "schedule_id")
-    private List<Schedule> schedule;
-
+    private List<Schedule> scheduleList;
 }

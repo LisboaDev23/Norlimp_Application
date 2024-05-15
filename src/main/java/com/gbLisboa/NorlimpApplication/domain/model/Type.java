@@ -3,6 +3,7 @@ package com.gbLisboa.NorlimpApplication.domain.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.List;
@@ -13,24 +14,25 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "tb_payment")
-public class Payment {
+@Table(name = "tb_type")
+public class Type {
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "description")
-    private String description;
+    @NotBlank
+    @Column(name = "name_type", nullable = false, unique = true)
+    @Size(max = 120)
+    private String nameType;
 
     @NotBlank
-    @Column(name = "value", nullable = false)
-    private Double value;
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @OneToMany
-    @JoinColumn(name = "schedule_id")
-    private List<Schedule> schedulesList;
-
+    @JoinColumn(name = "type_id") //na tabela de serviço, join na coluna type_id
+    private List<Service> serviceList;
 }

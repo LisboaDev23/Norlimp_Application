@@ -35,7 +35,7 @@ public class Adress {
 
     @NotBlank
     @Column(name = "city", nullable = false)
-    @Size(min = 2, max = 40)
+    @Size(max = 40)
     private String city;
 
     @NotBlank
@@ -44,7 +44,7 @@ public class Adress {
     private String state;
 
     @Valid
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_adress"), nullable = false)
     private User user;
 }
