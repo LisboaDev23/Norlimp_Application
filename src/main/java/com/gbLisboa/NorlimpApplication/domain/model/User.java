@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -35,6 +36,10 @@ public class User {
     private String cpf;
 
     @NotBlank
+    @Column(name = "birthday", nullable = false)
+    private LocalDate birthday;
+
+    @NotBlank
     @Column(name = "email", nullable = false, unique = true)
     @Size(max = 256)
     @Email
@@ -46,27 +51,25 @@ public class User {
     private String telephone;
 
     @Valid
-    @NotNull
     @NotBlank
     @OneToOne(mappedBy = "adress_id")
-    private AdressClient adress;
+    private Adress adress;
 
     @Valid
-    @NotNull
+    @NotBlank
     @OneToOne
     @JoinColumn(name = "login_id")
     private Login login;
 
     @Valid
-    @NotNull
     @NotBlank
     @OneToMany(mappedBy = "tb_service")
     private List<Service> serviceRequest;
 
     @Valid
-    @NotNull
     @NotBlank
-    @OneToMany(mappedBy = "tb_schedulling")
-    private List<Schedulling> schedulling;
+    @OneToMany
+    @JoinColumn(name = "schedule_id")
+    private List<Schedule> schedule;
 
 }

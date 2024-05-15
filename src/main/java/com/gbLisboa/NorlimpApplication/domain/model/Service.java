@@ -1,7 +1,9 @@
 package com.gbLisboa.NorlimpApplication.domain.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter
@@ -19,7 +21,16 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrement id
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_service_user"), referencedColumnName = "id")
-    private User user;
+    @NotBlank
+    @Column(name = "name_service", nullable = false, unique = true)
+    @Size(min = 4,max = 80)
+    private String nameSerice;
+
+    @NotBlank
+    @Column(name = "description", nullable = false)
+    private String description;
+
+    @NotBlank
+    @Column(name = "type", nullable = false)
+    private String type;
 }

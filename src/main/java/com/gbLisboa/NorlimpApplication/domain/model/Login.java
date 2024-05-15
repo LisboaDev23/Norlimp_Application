@@ -25,6 +25,7 @@ public class Login {
     @Column(name = "username", nullable = false, unique = true)
     @Size(max = 80)
     private String username;
+
     @NotBlank
     @Column(name = "password", nullable = false)
     private String password;
