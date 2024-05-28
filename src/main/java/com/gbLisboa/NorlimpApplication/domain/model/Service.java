@@ -15,7 +15,6 @@ import lombok.*;
 @Entity
 @Table(name = "tb_service")
 public class Service {
-
     @NotNull
     @EqualsAndHashCode.Include
     @Id

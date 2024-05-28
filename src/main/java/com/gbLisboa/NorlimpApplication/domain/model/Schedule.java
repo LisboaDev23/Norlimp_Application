@@ -42,6 +42,7 @@ public class Schedule {
     @Valid
     @NotBlank
     @OneToMany
+    @JoinColumn(name = "service_id")
     private List<Service> serviceRequest;
 
 }
