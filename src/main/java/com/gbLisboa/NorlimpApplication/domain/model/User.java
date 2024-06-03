@@ -50,10 +50,8 @@ public class User {
     @Size(max = 14)
     private String telephone;
 
-    @Valid
     @NotBlank
     @OneToMany
-    @JoinColumn(name = "adress_id")
     private List<Adress> adressList;
 
     @Valid
@@ -65,6 +63,5 @@ public class User {
     @Valid
     @NotBlank
     @OneToMany
-    @JoinColumn(name = "schedule_id")
     private List<Schedule> scheduleList;
 }

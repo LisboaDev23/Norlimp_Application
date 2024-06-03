@@ -30,7 +30,6 @@ public class Payment {
     private Double value;
 
     @OneToMany
-    @JoinColumn(name = "schedule_id")
     private List<Schedule> schedulesList;
 
 }

@@ -13,8 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    List<Schedule> getSchedulesByPayment(Payment payment);
-    Optional<Schedule> findByService(Service service);
+    List<Schedule> findByPayment(Payment payment);
     List<Schedule> findSchedulesByDates(List<Date> dates);
     List<Schedule> findSchedulesByUser(User user);
 }

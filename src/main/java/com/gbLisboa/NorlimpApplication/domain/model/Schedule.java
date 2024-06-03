@@ -39,10 +39,8 @@ public class Schedule {
     @JoinColumn(name = "payment_id", foreignKey = @ForeignKey(name = "fk_schedule_payment"), nullable = false)
     private Payment payment;
 
-    @Valid
     @NotBlank
     @OneToMany
-    @JoinColumn(name = "service_id")
     private List<Service> serviceRequest;
 
 }

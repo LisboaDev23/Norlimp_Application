@@ -45,6 +45,6 @@ public class Adress {
 
     @Valid
     @ManyToOne
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_adress"), nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
