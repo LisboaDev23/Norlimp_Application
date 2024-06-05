@@ -1,9 +1,11 @@
 package com.gbLisboa.NorlimpApplication.domain.service;
 
 import com.gbLisboa.NorlimpApplication.domain.exception.LoginException;
+import com.gbLisboa.NorlimpApplication.domain.exception.UserException;
 import com.gbLisboa.NorlimpApplication.domain.model.Login;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.LoginRepository;
+import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoginService {
 
     private LoginRepository loginRepository;
-    private UserService userService;
 
     public Login findLogin(Long loginId){
         return loginRepository.findById(loginId)
@@ -27,8 +28,6 @@ public class LoginService {
         if (emailInUse ){
             throw new LoginException("Não foi possível cadastrar um novo login com esse email no banco de dados pois o mesmo já está cadastrado.");
         }
-        User user = userService.findUser(login.getUser().getId());
-        login.setUser(user);
         return loginRepository.save(login);
     }
 

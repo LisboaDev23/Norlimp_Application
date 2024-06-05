@@ -1,8 +1,10 @@
 package com.gbLisboa.NorlimpApplication.domain.service;
 
+import com.gbLisboa.NorlimpApplication.domain.exception.LoginException;
 import com.gbLisboa.NorlimpApplication.domain.exception.UserException;
 import com.gbLisboa.NorlimpApplication.domain.model.Login;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
+import com.gbLisboa.NorlimpApplication.domain.repository.LoginRepository;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private UserRepository userRepository;
+    private LoginRepository loginRepository;
     private LoginService loginService;
 
     public User findUser(Long userId){
@@ -21,7 +24,7 @@ public class UserService {
     }
 
     @Transactional
-    public User saveUser(User user){
+    public User saveUserWithoutLogin(User user, Login login){
         boolean cpfInUse = userRepository.findByCpf(user.getCpf())
                 .isPresent();
         boolean emailInUse = userRepository.findByEmail(user.getEmail())
@@ -29,8 +32,9 @@ public class UserService {
         if (cpfInUse && emailInUse){
             throw new UserException("Usuário com cpf ou email já cadastrado, tente novamente.");
         }
-        Login login = loginService.findLogin(user.getLogin().getId());
         user.setLogin(login);
+        login.setUser(user);
+        loginRepository.save(login);
         return userRepository.save(user);
     }
 

@@ -55,8 +55,7 @@ public class User {
 
     @Valid
     @NotBlank
-    @OneToOne
-    @JoinColumn(name = "login_id")
+    @OneToOne(mappedBy = "user")
     private Login login;
 
     @OneToMany
