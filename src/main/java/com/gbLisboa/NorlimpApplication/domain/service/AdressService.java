@@ -50,7 +50,7 @@ public class AdressService {
         if (!userIsPresent){
             throw new UserException("Usuário não encontrado no banco de dados, logo não é possível encontrar os endereços.");
         }
-        return userRepository.findById(user.getId()).get().getAdressList();
+        return userService.findUser(user.getId()).getAdressList();
     }
 
     public List<Adress> getAllAdressSortedByRoad (){

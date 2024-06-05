@@ -25,7 +25,7 @@ public class LoginService {
         boolean emailInUse = loginRepository.findByEmail(login.getEmail())
                 .filter(l ->!l.equals(login))
                 .isPresent();
-        if (emailInUse ){
+        if (emailInUse){
             throw new LoginException("Não foi possível cadastrar um novo login com esse email no banco de dados pois o mesmo já está cadastrado.");
         }
         return loginRepository.save(login);
