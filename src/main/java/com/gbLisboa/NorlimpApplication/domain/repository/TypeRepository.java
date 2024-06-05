@@ -1,17 +1,11 @@
 package com.gbLisboa.NorlimpApplication.domain.repository;
 
-import com.gbLisboa.NorlimpApplication.domain.model.Service;
 import com.gbLisboa.NorlimpApplication.domain.model.Type;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface TypeRepository extends JpaRepository<Type, Long> {
-    Optional<Type> findByName(String nameType);
+    Optional<Type> findByNameType(String nameType);
 }
