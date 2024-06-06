@@ -15,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoginService {
 
     private LoginRepository loginRepository;
-
+    private UserService userService;
+    private UserRepository userRepository;
     public Login findLogin(Long loginId){
         return loginRepository.findById(loginId)
                 .orElseThrow(() -> new LoginException("Login com id fornecido não encontrado."));
@@ -46,6 +47,14 @@ public class LoginService {
             throw new LoginException("Login inválido, logo não foi possível encontrar o usuário através do login.");
         }
         return findLogin(login.getId()).getUser();
+    }
+
+    public Login findLoginByUser (User user){
+        boolean userExist = userRepository.existsById(user.getId());
+        if (!userExist){
+            throw new UserException("Usuário não encontrado no banco de dados!");
+        }
+        return userService.findUser(user.getId()).getLogin();
     }
 
 }

@@ -26,6 +26,7 @@ public class AdressService {
         return adressRepository.findById(adressId)
                 .orElseThrow(() -> new AdressException("Endereço não encontrado!"));
     }
+
     @Transactional
     public Adress saveAdress (Adress adress) {
         boolean adressInUse = adressRepository.existsById(adress.getId());
@@ -37,7 +38,7 @@ public class AdressService {
         return adressRepository.save(adress);
     }
     @Transactional
-    public void deleteAdress (Long adressId) {
+    public void deleteAdressById (Long adressId) {
         boolean adressIsPresent = adressRepository.existsById(adressId);
         if (!adressIsPresent){
             throw new AdressException("Não foi possível excluir o endereço informado pois ele não se encontra no banco de dados.");
@@ -48,7 +49,7 @@ public class AdressService {
     public List<Adress> findManyAdressByUser(User user){
         boolean userIsPresent = userRepository.findById(user.getId()).isPresent();
         if (!userIsPresent){
-            throw new UserException("Usuário não encontrado no banco de dados, logo não é possível encontrar os endereços.");
+            throw new UserException("Usuário não encontrado no banco de dados, logo não é possível encontrar os seus respectivos endereços.");
         }
         return userService.findUser(user.getId()).getAdressList();
     }

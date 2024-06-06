@@ -5,7 +5,6 @@ import com.gbLisboa.NorlimpApplication.domain.model.Payment;
 import com.gbLisboa.NorlimpApplication.domain.model.Schedule;
 import com.gbLisboa.NorlimpApplication.domain.repository.PaymentRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,7 @@ public class PaymentService {
     public Payment savePayment (Payment payment){
         boolean paymentIsSave = paymentRepository.existsById(payment.getId());
         if (paymentIsSave){
-            throw new PaymentException("Pagamento não cadastrado pois já se encontra no banco de dados.");
+            throw new PaymentException("Pagamento já se encontra no banco de dados.");
         }
         return paymentRepository.save(payment);
     }

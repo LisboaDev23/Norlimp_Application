@@ -19,7 +19,7 @@ public class ScheduleService {
 
     public Schedule findSchedule(Long scheduleId){
         return scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleException(""));
+                .orElseThrow(() -> new ScheduleException("Agendamento não encontrado no banco de dados!"));
     }
 
     @Transactional

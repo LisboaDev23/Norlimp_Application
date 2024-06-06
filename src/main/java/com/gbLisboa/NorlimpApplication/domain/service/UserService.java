@@ -1,13 +1,10 @@
 package com.gbLisboa.NorlimpApplication.domain.service;
 
-import com.gbLisboa.NorlimpApplication.domain.exception.LoginException;
 import com.gbLisboa.NorlimpApplication.domain.exception.UserException;
 import com.gbLisboa.NorlimpApplication.domain.model.Login;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
-import com.gbLisboa.NorlimpApplication.domain.repository.LoginRepository;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
@@ -15,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private UserRepository userRepository;
-    private LoginRepository loginRepository;
     private LoginService loginService;
 
     public User findUser(Long userId){
@@ -29,22 +25,22 @@ public class UserService {
                 .isPresent();
         boolean emailInUse = userRepository.findByEmail(user.getEmail())
                 .isPresent();
-        if (cpfInUse && emailInUse){
+        if (cpfInUse || emailInUse){
             throw new UserException("Usuário com cpf ou email já cadastrado, tente novamente.");
         }
         user.setLogin(login);
         login.setUser(user);
-        loginRepository.save(login);
+        loginService.saveLogin(login);
         return userRepository.save(user);
     }
 
     @Transactional
-    public void deleteUser(User user){
-        boolean userIsPresent = userRepository.findById(user.getId()).isPresent();
+    public void deleteUser(Long userId){
+        boolean userIsPresent = userRepository.existsById(userId);
         if (!userIsPresent){
             throw new UserException("Não foi possível excluir o cliente pois tal não se encontra no banco de dados.");
         }
-        userRepository.delete(user);
+        userRepository.deleteById(userId);
     }
 
 

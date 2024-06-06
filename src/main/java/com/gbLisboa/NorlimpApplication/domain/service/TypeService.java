@@ -4,7 +4,6 @@ import com.gbLisboa.NorlimpApplication.domain.exception.TypeException;
 import com.gbLisboa.NorlimpApplication.domain.model.Type;
 import com.gbLisboa.NorlimpApplication.domain.repository.TypeRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
