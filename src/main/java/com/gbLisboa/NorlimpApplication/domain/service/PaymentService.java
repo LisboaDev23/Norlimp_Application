@@ -31,15 +31,6 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
-    @Transactional
-    public void deletePaymentById (Long paymentId){
-        boolean paymentExist = paymentRepository.existsById(paymentId);
-        if(!paymentExist){
-            throw new PaymentException("Pagamento não encontrado, dessa forma não foi possível excluí-lo do banco de dados.");
-        }
-        paymentRepository.deleteById(paymentId);
-    }
-
     public List<Schedule> findSchedulesByPayment (Payment payment){
         return findPayment(payment.getId()).getSchedulesList();
     }

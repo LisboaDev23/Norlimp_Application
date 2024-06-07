@@ -3,6 +3,7 @@ package com.gbLisboa.NorlimpApplication.domain.service;
 import com.gbLisboa.NorlimpApplication.domain.exception.UserException;
 import com.gbLisboa.NorlimpApplication.domain.model.Login;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
+import com.gbLisboa.NorlimpApplication.domain.repository.LoginRepository;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private UserRepository userRepository;
-    private LoginService loginService;
+    private LoginRepository loginRepository;
 
     public User findUser(Long userId){
         return userRepository.findById(userId)
@@ -20,7 +21,7 @@ public class UserService {
     }
 
     @Transactional
-    public User saveUserWithoutLogin(User user, Login login){
+    public User saveUserWithoutLogin(User user){
         boolean cpfInUse = userRepository.findByCpf(user.getCpf())
                 .isPresent();
         boolean emailInUse = userRepository.findByEmail(user.getEmail())
@@ -28,19 +29,7 @@ public class UserService {
         if (cpfInUse || emailInUse){
             throw new UserException("Usuário com cpf ou email já cadastrado, tente novamente.");
         }
-        user.setLogin(login);
-        login.setUser(user);
-        loginService.saveLogin(login);
         return userRepository.save(user);
-    }
-
-    @Transactional
-    public void deleteUser(Long userId){
-        boolean userIsPresent = userRepository.existsById(userId);
-        if (!userIsPresent){
-            throw new UserException("Não foi possível excluir o cliente pois tal não se encontra no banco de dados.");
-        }
-        userRepository.deleteById(userId);
     }
 
 

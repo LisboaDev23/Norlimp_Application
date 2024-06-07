@@ -35,14 +35,5 @@ public class ScheduleService {
         return scheduleRepository.save(schedule);
     }
 
-    @Transactional
-    public void deleteScheduleById(Long scheduleId){
-        boolean scheduleExist = scheduleRepository.existsById(scheduleId);
-        if (!scheduleExist){
-            throw new ScheduleException("O agendamento não existe, logo não é possível excluí-lo do banco de dados");
-        }
-        scheduleRepository.deleteById(scheduleId);
-    }
-
 
 }

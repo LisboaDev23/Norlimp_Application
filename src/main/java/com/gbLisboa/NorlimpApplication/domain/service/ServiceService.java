@@ -34,15 +34,5 @@ public class ServiceService {
         return serviceRepository.save(service);
     }
 
-    @Transactional
-    public void deleteServiceById (Long serviceId){
-        boolean serviceExist = serviceRepository.existsById(serviceId);
-        if (!serviceExist){
-            throw new ServiceException("Serviço não está cadastrado no banco de dados, logo não é possível excluí-lo.");
-        }
-        serviceRepository.deleteById(serviceId);
-    }
-
-
 
 }

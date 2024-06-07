@@ -43,7 +43,7 @@ public class ServiceController {
         if (!serviceRepository.existsById(serviceId)){
             return ResponseEntity.notFound().build();
         }
-        serviceService.deleteServiceById(serviceId);
+        serviceRepository.deleteById(serviceId);
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{serviceId}")

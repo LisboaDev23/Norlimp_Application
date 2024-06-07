@@ -43,7 +43,7 @@ public class LoginController {
         if (!loginRepository.existsById(loginId)){
             return ResponseEntity.notFound().build();
         }
-        loginService.deleteLoginById(loginId);
+        loginRepository.deleteById(loginId);
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{loginId}")

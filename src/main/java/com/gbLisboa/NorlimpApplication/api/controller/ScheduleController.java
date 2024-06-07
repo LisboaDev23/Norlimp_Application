@@ -43,7 +43,7 @@ public class ScheduleController {
         if (!scheduleRepository.existsById(scheduleId)){
             return ResponseEntity.notFound().build();
         }
-        scheduleService.deleteScheduleById(scheduleId);
+        scheduleRepository.deleteById(scheduleId);
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{scheduleId}")

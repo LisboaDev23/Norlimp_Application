@@ -7,6 +7,7 @@ import com.gbLisboa.NorlimpApplication.domain.service.AdressService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +24,13 @@ public class AdressController {
     private AdressRepository adressRepository;
     private final ModelMapper modelMapper;
 
+
     @GetMapping
     public List<Adress> findAllAdress (){
         return adressRepository.findAll();
     }
 
-    @GetMapping("{/adressId}")
+    @GetMapping("/{adressId}")
     public ResponseEntity<AdressModel> findAdress (@PathVariable Long adressId){
         return adressRepository.findById(adressId)
                 .map(adress -> modelMapper.map(adress, AdressModel.class))
@@ -47,7 +49,7 @@ public class AdressController {
         if (!adressRepository.existsById(adressId)){
             return ResponseEntity.notFound().build();
         }
-        adressService.deleteAdressById(adressId);
+        adressRepository.deleteById(adressId);
         return ResponseEntity.noContent().build();
     }
 

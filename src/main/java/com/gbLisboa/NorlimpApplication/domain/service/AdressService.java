@@ -7,6 +7,7 @@ import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.AdressRepository;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class AdressService {
+
 
     private AdressRepository adressRepository;
     private UserService userService;
@@ -36,14 +38,6 @@ public class AdressService {
         User user = userService.findUser(adress.getUser().getId());
         adress.setUser(user);
         return adressRepository.save(adress);
-    }
-    @Transactional
-    public void deleteAdressById (Long adressId) {
-        boolean adressIsPresent = adressRepository.existsById(adressId);
-        if (!adressIsPresent){
-            throw new AdressException("Não foi possível excluir o endereço informado pois ele não se encontra no banco de dados.");
-        }
-        adressRepository.deleteById(adressId);
     }
 
     public List<Adress> findManyAdressByUser(User user){

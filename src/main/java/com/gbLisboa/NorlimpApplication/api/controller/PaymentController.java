@@ -43,7 +43,7 @@ public class PaymentController {
         if (!paymentRepository.existsById(paymentId)){
             return ResponseEntity.notFound().build();
         }
-        paymentService.deletePaymentById(paymentId);
+        paymentRepository.deleteById(paymentId);
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{paymentId}")

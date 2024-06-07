@@ -23,6 +23,7 @@ public class UserController {
     private UserRepository userRepository;
     private UserService userService;
     private ModelMapper modelMapper;
+    private LoginRepository loginRepository;
 
     @GetMapping
     public List<User> findAllUsers(){
@@ -36,17 +37,16 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/{loginId}")
+    @PostMapping
     public User registerUser(@Valid @RequestBody User user){
-        Login login = user.getLogin();
-        return userService.saveUserWithoutLogin(user,login);
+        return userService.saveUserWithoutLogin(user);
     }
     @DeleteMapping("/{userId}")
     public ResponseEntity<UserModel> deleteUser(@PathVariable Long userId){
         if (!userRepository.existsById(userId)){
             return  ResponseEntity.noContent().build();
         }
-        userService.deleteUser(userId);
+        userRepository.deleteById(userId);
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{userId}")
@@ -56,8 +56,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         user.setId(userId);
-        Login login = user.getLogin();
-        userService.saveUserWithoutLogin(user,login);
+        userService.saveUserWithoutLogin(user);
         return userRepository.findById(user.getId())
                 .map(u -> modelMapper.map(u, UserModel.class))
                 .map(ResponseEntity::ok)

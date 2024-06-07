@@ -27,14 +27,6 @@ public class TypeService {
         return typeRepository.save(type);
     }
 
-    @Transactional
-    public void deleteTypeById(Long typeId){
-        boolean typeExist = typeRepository.existsById(typeId);
-        if (!typeExist){
-            throw new TypeException("Tipo de serviço não cadastrado no banco de dados, portanto não é possível efetuar a operação.");
-        }
-        typeRepository.deleteById(typeId);
-    }
 
 }
 

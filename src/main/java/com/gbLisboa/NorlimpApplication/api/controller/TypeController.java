@@ -43,7 +43,7 @@ public class TypeController {
         if (!typeRepository.existsById(typeId)){
             return ResponseEntity.notFound().build();
         }
-        typeService.deleteTypeById(typeId);
+        typeRepository.deleteById(typeId);
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{typeId}")

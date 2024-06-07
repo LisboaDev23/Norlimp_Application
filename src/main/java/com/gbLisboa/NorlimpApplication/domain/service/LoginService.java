@@ -17,6 +17,8 @@ public class LoginService {
     private LoginRepository loginRepository;
     private UserService userService;
     private UserRepository userRepository;
+
+
     public Login findLogin(Long loginId){
         return loginRepository.findById(loginId)
                 .orElseThrow(() -> new LoginException("Login com id fornecido não encontrado."));
@@ -30,15 +32,6 @@ public class LoginService {
             throw new LoginException("Não foi possível cadastrar um novo login com esse email no banco de dados pois o mesmo já está cadastrado.");
         }
         return loginRepository.save(login);
-    }
-
-    @Transactional
-    public void deleteLoginById (Long loginId){
-        boolean loginExist = loginRepository.existsById(loginId);
-        if (!loginExist){
-            throw new LoginException("Não existe login criado no banco de dados com o id fornecido, portanto não é possível excluí-lo");
-        }
-        loginRepository.deleteById(loginId);
     }
 
     public User findUserByLogin (Login login){

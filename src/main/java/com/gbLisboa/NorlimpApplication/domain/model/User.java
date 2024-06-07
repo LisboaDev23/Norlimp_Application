@@ -1,5 +1,7 @@
 package com.gbLisboa.NorlimpApplication.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gbLisboa.NorlimpApplication.domain.validation.ValidationGroups;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -20,7 +22,7 @@ import java.util.List;
 @Table(name = "tb_user")
 public class User {
 
-    @NotNull//(groups = ValidationGroups.UserId.class)
+    @NotNull(groups = ValidationGroups.UserId.class)
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrement id
@@ -36,7 +38,7 @@ public class User {
     @Size(min = 11,max = 14)
     private String cpf;
 
-    @NotBlank
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "birthday", nullable = false)
     private LocalDate birthday;
 
@@ -54,7 +56,6 @@ public class User {
     private List<Adress> adressList;
 
     @Valid
-    @NotBlank
     @OneToOne(mappedBy = "user")
     private Login login;
 
