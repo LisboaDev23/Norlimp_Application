@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -22,9 +23,12 @@ public class PaymentController {
     private PaymentRepository paymentRepository;
     private ModelMapper modelMapper;
 
-    @GetMapping
-    public List<Payment> findAllPayments(){
-        return paymentRepository.findAll();
+    @GetMapping("listPayments")
+    public List<PaymentModel> findAllPayments(){
+        return paymentRepository.findAll()
+                .stream()
+                .map(this::toPaymentModel)
+                .collect(Collectors.toList());
     }
     @GetMapping("/{paymentId}")
     public ResponseEntity<PaymentModel> findPayment(@PathVariable Long paymentId){
@@ -58,5 +62,9 @@ public class PaymentController {
                 .map(p -> modelMapper.map(p, PaymentModel.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    private PaymentModel toPaymentModel(Payment payment){
+        return modelMapper.map(payment, PaymentModel.class);
     }
 }

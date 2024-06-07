@@ -1,10 +1,12 @@
 package com.gbLisboa.NorlimpApplication.domain.model;
 
+import com.gbLisboa.NorlimpApplication.domain.validation.ValidationGroups;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.ConvertGroup;
 import lombok.*;
 
 @Getter
@@ -15,9 +17,9 @@ import lombok.*;
 @Entity
 @Table(name = "tb_service")
 public class Service {
-    @NotNull
-    @EqualsAndHashCode.Include
     @Id
+    @NotNull(groups = ValidationGroups.ServiceId.class)
+    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrement id
     private Long id;
 
@@ -30,14 +32,15 @@ public class Service {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @NotBlank
-    @ManyToOne
-    @JoinColumn(name = "type_id", foreignKey = @ForeignKey(name = "fk_service_type"), nullable = false)
     @Valid
+    @ConvertGroup(from = Service.class, to = ValidationGroups.TypeId.class)
+    @NotNull
+    @ManyToOne
     private Type type;
 
-    @ManyToOne
-    @JoinColumn(name = "schedule_id", foreignKey = @ForeignKey(name = "fk_schedule_service"), nullable = false)
     @Valid
+    @ConvertGroup(from = Service.class,to = ValidationGroups.ScheduleId.class)
+    @NotNull
+    @ManyToOne
     private Schedule schedule;
 }

@@ -42,12 +42,4 @@ public class LoginService {
         return findLogin(login.getId()).getUser();
     }
 
-    public Login findLoginByUser (User user){
-        boolean userExist = userRepository.existsById(user.getId());
-        if (!userExist){
-            throw new UserException("Usuário não encontrado no banco de dados!");
-        }
-        return userService.findUser(user.getId()).getLogin();
-    }
-
 }

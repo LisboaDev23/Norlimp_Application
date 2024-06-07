@@ -1,11 +1,13 @@
 package com.gbLisboa.NorlimpApplication.domain.model;
 
+import com.gbLisboa.NorlimpApplication.domain.validation.ValidationGroups;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,11 +18,10 @@ import java.util.List;
 @Entity
 @Table(name = "tb_type")
 public class Type {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
+    @NotNull(groups = ValidationGroups.TypeId.class)
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
@@ -32,7 +33,6 @@ public class Type {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @OneToMany
-    @JoinColumn(name = "type_id") //na tabela de serviço, join na coluna type_id
-    private List<Service> serviceList;
+    @OneToMany(mappedBy = "type")
+    private List<Service> serviceList = new ArrayList<>();
 }

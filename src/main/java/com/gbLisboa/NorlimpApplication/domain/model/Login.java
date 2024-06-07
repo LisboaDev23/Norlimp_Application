@@ -41,8 +41,9 @@ public class Login {
     private String password;
 
     @Valid
-    @ConvertGroup(from = Default.class, to = ValidationGroups.UserId.class)
+    @ConvertGroup(to = ValidationGroups.UserId.class)
+    @NotNull
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 }

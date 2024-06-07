@@ -3,7 +3,6 @@ package com.gbLisboa.NorlimpApplication.domain.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gbLisboa.NorlimpApplication.domain.validation.ValidationGroups;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -21,10 +21,9 @@ import java.util.List;
 @Entity
 @Table(name = "tb_user")
 public class User {
-
+    @Id
     @NotNull(groups = ValidationGroups.UserId.class)
     @EqualsAndHashCode.Include
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrement id
     private Long id;
 
@@ -52,13 +51,10 @@ public class User {
     @Size(max = 14)
     private String telephone;
 
-    @OneToMany
-    private List<Adress> adressList;
+    @OneToMany(mappedBy = "user")
+    private List<Adress> adressList = new ArrayList<>();
 
-    @Valid
-    @OneToOne(mappedBy = "user")
-    private Login login;
+    @OneToMany(mappedBy = "user")
+    private List<Schedule> scheduleList = new ArrayList<>();
 
-    @OneToMany
-    private List<Schedule> scheduleList;
 }

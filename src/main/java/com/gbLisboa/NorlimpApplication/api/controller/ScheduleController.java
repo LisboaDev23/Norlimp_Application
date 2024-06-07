@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -22,9 +23,12 @@ public class ScheduleController {
     private ScheduleRepository scheduleRepository;
     private ModelMapper modelMapper;
 
-    @GetMapping
-    public List<Schedule> findAllSchedules(){
-        return scheduleRepository.findAll();
+    @GetMapping("listSchedulles")
+    public List<ScheduleModel> findAllSchedules(){
+        return scheduleRepository.findAll()
+                .stream()
+                .map(this::toScheduleModel)
+                .collect(Collectors.toList());
     }
     @GetMapping("/{scheduleId}")
     public ResponseEntity<ScheduleModel> findSchedule(@PathVariable Long scheduleId){
@@ -58,5 +62,9 @@ public class ScheduleController {
                 .map(s -> modelMapper.map(s, ScheduleModel.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    private ScheduleModel toScheduleModel(Schedule schedule){
+        return modelMapper.map(schedule, ScheduleModel.class);
     }
 }

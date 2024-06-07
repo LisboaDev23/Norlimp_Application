@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -22,9 +23,12 @@ public class TypeController {
     private TypeRepository typeRepository;
     private ModelMapper modelMapper;
 
-    @GetMapping
-    public List<Type> findAllTypes(){
-        return typeRepository.findAll();
+    @GetMapping("listTypes")
+    public List<TypeModel> findAllTypes(){
+        return typeRepository.findAll()
+                .stream()
+                .map(this::toMapModel)
+                .collect(Collectors.toList());
     }
     @GetMapping("/{typeId}")
     public ResponseEntity<TypeModel> getType(@PathVariable Long typeId){
@@ -55,5 +59,9 @@ public class TypeController {
                 .map(t -> modelMapper.map(t, TypeModel.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    private TypeModel toMapModel (Type type){
+        return modelMapper.map(type, TypeModel.class);
     }
 }

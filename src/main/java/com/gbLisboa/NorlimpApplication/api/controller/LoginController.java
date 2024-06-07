@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -22,9 +23,12 @@ public class LoginController {
     private LoginService loginService;
     private ModelMapper modelMapper;
 
-    @GetMapping
-    public List<Login> findAllLogins (){
-        return loginRepository.findAll();
+    @GetMapping("listLogin")
+    public List<LoginModel> findAllLogins (){
+        return loginRepository.findAll()
+                .stream()
+                .map(this::toLoginModel)
+                .collect(Collectors.toList());
     }
     @GetMapping("/{loginId}")
     public ResponseEntity<LoginModel> findLogin(@PathVariable Long loginId){
@@ -55,5 +59,9 @@ public class LoginController {
         login.setId(loginId);
         login = loginService.saveLogin(login);
         return ResponseEntity.ok(login);
+    }
+
+    private LoginModel toLoginModel(Login login){
+        return modelMapper.map(login, LoginModel.class);
     }
 }

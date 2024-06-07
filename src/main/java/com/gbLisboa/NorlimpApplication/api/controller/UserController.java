@@ -1,9 +1,7 @@
 package com.gbLisboa.NorlimpApplication.api.controller;
 
 import com.gbLisboa.NorlimpApplication.api.model.UserModel;
-import com.gbLisboa.NorlimpApplication.domain.model.Login;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
-import com.gbLisboa.NorlimpApplication.domain.repository.LoginRepository;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import com.gbLisboa.NorlimpApplication.domain.service.UserService;
 import jakarta.validation.Valid;
@@ -14,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -23,11 +22,13 @@ public class UserController {
     private UserRepository userRepository;
     private UserService userService;
     private ModelMapper modelMapper;
-    private LoginRepository loginRepository;
 
-    @GetMapping
-    public List<User> findAllUsers(){
-        return userRepository.findAll();
+    @GetMapping("listUsers")
+    public List<UserModel> findAllUsers(){
+        return userRepository.findAll()
+                .stream()
+                .map(this::toUserModel)
+                .collect(Collectors.toList());
     }
     @GetMapping("/{userId}")
     public ResponseEntity<UserModel> findUser(@PathVariable Long userId){
@@ -39,7 +40,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public User registerUser(@Valid @RequestBody User user){
-        return userService.saveUserWithoutLogin(user);
+        return userService.saveUser(user);
     }
     @DeleteMapping("/{userId}")
     public ResponseEntity<UserModel> deleteUser(@PathVariable Long userId){
@@ -55,12 +56,16 @@ public class UserController {
         if (!userRepository.existsById(userId)){
             return ResponseEntity.notFound().build();
         }
+        userService.findUser(userId);
         user.setId(userId);
-        userService.saveUserWithoutLogin(user);
+        userService.saveUser(user);
         return userRepository.findById(user.getId())
                 .map(u -> modelMapper.map(u, UserModel.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    private UserModel toUserModel (User user){
+        return modelMapper.map(user, UserModel.class);
+    }
 }

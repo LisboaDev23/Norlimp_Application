@@ -7,13 +7,12 @@ import com.gbLisboa.NorlimpApplication.domain.service.AdressService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -25,9 +24,12 @@ public class AdressController {
     private final ModelMapper modelMapper;
 
 
-    @GetMapping
-    public List<Adress> findAllAdress (){
-        return adressRepository.findAll();
+    @GetMapping("/listAdress")
+    public List<AdressModel> findAllAdress (){
+        return adressRepository.findAll()
+                .stream()
+                .map(this::toAdressModel)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{adressId}")
@@ -62,6 +64,10 @@ public class AdressController {
         adress.setId(adressId);
         adress = adressService.saveAdress(adress);
         return ResponseEntity.ok(adress);
+    }
+
+    private AdressModel toAdressModel(Adress adress){
+        return modelMapper.map(adress, AdressModel.class);
     }
 
 }

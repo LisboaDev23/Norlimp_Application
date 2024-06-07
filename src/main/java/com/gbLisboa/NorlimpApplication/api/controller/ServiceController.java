@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -22,9 +23,12 @@ public class ServiceController {
     private ServiceService serviceService;
     private ModelMapper modelMapper;
 
-    @GetMapping
-    public List<Service> findAllServices(){
-        return serviceRepository.findAll();
+    @GetMapping("listServices")
+    public List<ServiceModel> findAllServices(){
+        return serviceRepository.findAll()
+                .stream()
+                .map(this::toServiceModel)
+                .collect(Collectors.toList());
     }
     @GetMapping("/{serviceId}")
     public ResponseEntity<ServiceModel> findService(@PathVariable Long serviceId){
@@ -58,5 +62,9 @@ public class ServiceController {
                 .map(s -> modelMapper.map(s, ServiceModel.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    private ServiceModel toServiceModel(Service service){
+        return modelMapper.map(service, ServiceModel.class);
     }
 }
