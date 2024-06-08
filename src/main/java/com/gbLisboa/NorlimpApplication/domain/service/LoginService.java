@@ -1,11 +1,9 @@
 package com.gbLisboa.NorlimpApplication.domain.service;
 
 import com.gbLisboa.NorlimpApplication.domain.exception.LoginException;
-import com.gbLisboa.NorlimpApplication.domain.exception.UserException;
 import com.gbLisboa.NorlimpApplication.domain.model.Login;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.LoginRepository;
-import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoginService {
 
     private LoginRepository loginRepository;
-    private UserService userService;
-    private UserRepository userRepository;
-
 
     public Login findLogin(Long loginId){
         return loginRepository.findById(loginId)

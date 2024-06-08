@@ -51,10 +51,5 @@ public class User {
     @Size(max = 14)
     private String telephone;
 
-    @OneToMany(mappedBy = "user")
-    private List<Adress> adressList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user")
-    private List<Schedule> scheduleList = new ArrayList<>();
 
 }

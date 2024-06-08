@@ -7,10 +7,10 @@ import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.AdressRepository;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,11 +18,9 @@ import java.util.stream.Collectors;
 @Service
 public class AdressService {
 
-
     private AdressRepository adressRepository;
     private UserService userService;
     private UserRepository userRepository;
-
 
     public Adress findAdress(Long adressId){
         return adressRepository.findById(adressId)
@@ -41,11 +39,16 @@ public class AdressService {
     }
 
     public List<Adress> findManyAdressByUser(User user){
+        Long userFoundId = userService.findUser(user.getId()).getId();
+        List<Adress> adressListUser = adressRepository.findAll();
         boolean userIsPresent = userRepository.findById(user.getId()).isPresent();
         if (!userIsPresent){
             throw new UserException("Usuário não encontrado no banco de dados, logo não é possível encontrar os seus respectivos endereços.");
         }
-        return userService.findUser(user.getId()).getAdressList();
+        return adressRepository.findAll()
+                .stream()
+                .map(adress -> adress.getUser().getId().equals(userFoundId))
+                .collect(Collectors.toList());
     }
 
     public List<Adress> getAllAdressSortedByRoad (){
