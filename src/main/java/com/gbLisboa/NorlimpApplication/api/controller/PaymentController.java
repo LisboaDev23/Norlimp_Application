@@ -23,48 +23,42 @@ public class PaymentController {
     private PaymentRepository paymentRepository;
     private ModelMapper modelMapper;
 
-    @GetMapping("listPayments")
-    public List<PaymentModel> findAllPayments(){
-        return paymentRepository.findAll()
-                .stream()
-                .map(this::toPaymentModel)
-                .collect(Collectors.toList());
+    @GetMapping("/listPayments")
+    public List<PaymentModel> findAll(){
+        return paymentService.findAllPayments();
     }
     @GetMapping("/{paymentId}")
-    public ResponseEntity<PaymentModel> findPayment(@PathVariable Long paymentId){
-        return paymentRepository.findById(paymentId)
-                .map(payment -> modelMapper.map(payment, PaymentModel.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public Payment registerPayment(@Valid @RequestBody Payment payment){
-        return paymentService.savePayment(payment);
-    }
-    @DeleteMapping("/{paymentId}")
-    public ResponseEntity<Void> deletePayment(@PathVariable Long paymentId){
+    public ResponseEntity<PaymentModel> find(@PathVariable Long paymentId){
         if (!paymentRepository.existsById(paymentId)){
             return ResponseEntity.notFound().build();
         }
-        paymentRepository.deleteById(paymentId);
+        PaymentModel paymentFound = paymentService.findPayment(paymentId);
+        return ResponseEntity.ok(paymentFound);
+    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/create")
+    public ResponseEntity<PaymentModel> register(@Valid @RequestBody Payment payment){
+        PaymentModel paymentSaved = paymentService.savePayment(payment);
+        return ResponseEntity.status(HttpStatus.CREATED).body(paymentSaved);
+    }
+    @DeleteMapping("/delete/{paymentId}")
+    public ResponseEntity<Void> delete(@PathVariable Long paymentId){
+        if (!paymentRepository.existsById(paymentId)){
+            return ResponseEntity.notFound().build();
+        }
+        paymentService.deletePayment(paymentId);
         return ResponseEntity.noContent().build();
     }
-    @PutMapping("/{paymentId}")
-    public ResponseEntity<PaymentModel> updatePayment (@PathVariable Long paymentId,
+    @PutMapping("/update/{paymentId}")
+    public ResponseEntity<PaymentModel> update (@PathVariable Long paymentId,
                                                       @Valid @RequestBody Payment payment){
         if(!paymentRepository.existsById(paymentId)){
             return ResponseEntity.notFound().build();
         }
         payment.setId(paymentId);
-        paymentService.savePayment(payment);
-        return paymentRepository.findById(payment.getId())
-                .map(p -> modelMapper.map(p, PaymentModel.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        PaymentModel paymentUpdate = paymentService.savePayment(payment);
+        return ResponseEntity.ok(paymentUpdate);
     }
 
-    private PaymentModel toPaymentModel(Payment payment){
-        return modelMapper.map(payment, PaymentModel.class);
-    }
+
 }

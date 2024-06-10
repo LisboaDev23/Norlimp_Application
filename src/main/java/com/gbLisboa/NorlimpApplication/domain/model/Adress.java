@@ -25,24 +25,24 @@ public class Adress {
     private Long id;
 
     @NotBlank
-    @Column(name = "road",nullable = false, length = 80)
+    @Column(name = "road", length = 80)
     private String road;
 
     @NotBlank
-    @Column(name = "number", nullable = false)
+    @Column(name = "number")
     private String number;
 
     @NotBlank
-    @Column(name = "neighborhood", nullable = false)
+    @Column(name = "neighborhood")
     private String neighborhood;
 
     @NotBlank
-    @Column(name = "city", nullable = false)
+    @Column(name = "city")
     @Size(max = 40)
     private String city;
 
     @NotBlank
-    @Column(name = "state", nullable = false)
+    @Column(name = "state")
     @Size(min = 2, max = 40)
     private String state;
 

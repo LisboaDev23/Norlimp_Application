@@ -32,12 +32,12 @@ public class Login {
     private String email;
 
     @NotBlank
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "username", unique = true)
     @Size(max = 80)
     private String username;
 
     @NotBlank
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     @Valid

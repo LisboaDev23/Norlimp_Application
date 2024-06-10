@@ -6,13 +6,11 @@ import com.gbLisboa.NorlimpApplication.domain.repository.AdressRepository;
 import com.gbLisboa.NorlimpApplication.domain.service.AdressService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -21,53 +19,63 @@ public class AdressController {
 
     private AdressService adressService;
     private AdressRepository adressRepository;
-    private final ModelMapper modelMapper;
 
-
-    @GetMapping("/listAdress")
-    public List<AdressModel> findAllAdress (){
-        return adressRepository.findAll()
-                .stream()
-                .map(this::toAdressModel)
-                .collect(Collectors.toList());  
+    @GetMapping("/list")
+    public List<AdressModel> findAll (){
+        return adressService.findAllAdress();
     }
 
     @GetMapping("/{adressId}")
-    public ResponseEntity<AdressModel> findAdress (@PathVariable Long adressId){
-        return adressRepository.findById(adressId)
-                .map(adress -> modelMapper.map(adress, AdressModel.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public Adress registerAdress (@Valid @RequestBody Adress adress){
-        return adressService.saveAdress(adress);
-    }
-
-    @DeleteMapping("/{adressId}")
-    public ResponseEntity<Void> deleteAdress (@PathVariable Long adressId){
+    public ResponseEntity<AdressModel> find (@PathVariable Long adressId){
         if (!adressRepository.existsById(adressId)){
             return ResponseEntity.notFound().build();
         }
-        adressRepository.deleteById(adressId);
-        return ResponseEntity.noContent().build();
+        AdressModel adressFound = adressService.findAdress(adressId);
+        return ResponseEntity.ok(adressFound);
     }
 
-    @PutMapping("/{adressId}")
-    public ResponseEntity<Adress> updateAdress (@PathVariable Long adressId,
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/create")
+    public AdressModel register (@Valid @RequestBody Adress adress){
+        return adressService.saveAdress(adress);
+    }
+
+    @DeleteMapping("/delete/{adressId}")
+    public ResponseEntity<Void> delete (@PathVariable Long adressId){
+        if (!adressRepository.existsById(adressId)){
+            return ResponseEntity.notFound().build();
+        }
+            adressService.deleteAdress(adressId);
+            return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/update/{adressId}")
+    public ResponseEntity<AdressModel> update (@PathVariable Long adressId,
                                                 @Valid @RequestBody Adress adress){
         if (!adressRepository.existsById(adressId)){
             return ResponseEntity.notFound().build();
         }
         adress.setId(adressId);
-        adress = adressService.saveAdress(adress);
-        return ResponseEntity.ok(adress);
+        AdressModel adressUpdate = adressService.saveAdress(adress);
+        return ResponseEntity.ok(adressUpdate);
     }
 
-    private AdressModel toAdressModel(Adress adress){
-        return modelMapper.map(adress, AdressModel.class);
+    @GetMapping("/adressSortedRoad")
+    public List<AdressModel> findSortedByRoad(){
+        return adressService.getAllAdressSortedByRoad();
     }
+    @GetMapping("/adressSortedNeighborhood")
+    public List<AdressModel> findSortedByNeighborhood(){
+        return adressService.getAllAdressSortedByNeighborhood();
+    }
+    @GetMapping("/adressSortedCity")
+    public List<AdressModel> findSortedByCity(){
+        return adressService.getAllAdressSortedByCity();
+    }
+    @GetMapping("/adressSortedRoad")
+    public List<AdressModel> findSortedByState(){
+        return adressService.getAllAdressSortedByState();
+    }
+
 
 }

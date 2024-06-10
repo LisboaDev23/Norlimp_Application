@@ -1,82 +1,86 @@
 package com.gbLisboa.NorlimpApplication.domain.service;
 
+import com.gbLisboa.NorlimpApplication.api.model.AdressModel;
 import com.gbLisboa.NorlimpApplication.domain.exception.AdressException;
-import com.gbLisboa.NorlimpApplication.domain.exception.UserException;
 import com.gbLisboa.NorlimpApplication.domain.model.Adress;
-import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.AdressRepository;
-import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class AdressService {
 
     private AdressRepository adressRepository;
-    private UserService userService;
-    private UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
-    public Adress findAdress(Long adressId){
+    public AdressModel findAdress (Long adressId){
         return adressRepository.findById(adressId)
+                .map(this::toAdressModel)
                 .orElseThrow(() -> new AdressException("Endereço não encontrado!"));
     }
 
-    @Transactional
-    public Adress saveAdress (Adress adress) {
-        //boolean adressInUse = adressRepository.existsById(adress.getId());
-        //if (adressInUse){
-            //throw new AdressException("Não foi possível cadastrar este endereço, pois ele já está presente no banco de dados.");
-        //}
-        //User user = userService.findUser(adress.getUser().getId());
-        //adress.setUser(user);
-        return adressRepository.save(adress);
-    }
-
-    public List<Adress> findManyAdressByUser(User user){
-        Long userFoundId = userService.findUser(user.getId()).getId();
-        List<Adress> adressListUser = adressRepository.findAll();
-        boolean userIsPresent = userRepository.findById(user.getId()).isPresent();
-        if (!userIsPresent){
-            throw new UserException("Usuário não encontrado no banco de dados, logo não é possível encontrar os seus respectivos endereços.");
-        }
-
-        for (Adress adress : adressListUser){
-            if (adress.getUser().getId().equals(userFoundId)){
-                adressListUser.add(adress);
-            }
-        }
-        return adressListUser
+    public List<AdressModel> findAllAdress (){
+        return adressRepository.findAll()
                 .stream()
-                .filter(adress -> Objects.equals(adress.getUser().getId(), userFoundId))
+                .map(this::toAdressModel)
                 .collect(Collectors.toList());
     }
 
-    public List<Adress> getAllAdressSortedByRoad (){
+    @Transactional
+    public AdressModel saveAdress (Adress adress) {
+        try {
+            adressRepository.save(adress);
+            return modelMapper.map(adress, AdressModel.class);
+        } catch (RuntimeException e){
+            throw new AdressException("Não foi possível cadastrar o endereço!");
+        }
+    }
+
+    @Transactional
+    public void deleteAdress (Long adressId){
+        try {
+            adressRepository.deleteById(adressId);
+        } catch (RuntimeException e){
+            if (!adressRepository.existsById(adressId)) {
+                throw new AdressException("Endereço não encontrado!");
+            }
+            throw new AdressException("Não foi possível excluir o endereço!");
+        }
+    }
+
+    public List<AdressModel> getAllAdressSortedByRoad (){
         return adressRepository.findAll().stream().
                 sorted(Comparator.comparing(Adress::getRoad))
+                .map(adress -> modelMapper.map(adress, AdressModel.class))
                 .collect(Collectors.toList());
     }
-    public List<Adress> getAllAdressSortedByNeighborhood (){
+
+    public List<AdressModel> getAllAdressSortedByNeighborhood (){
         return adressRepository.findAll().stream().
                 sorted(Comparator.comparing(Adress::getNeighborhood))
+                .map(adress -> modelMapper.map(adress, AdressModel.class))
                 .collect(Collectors.toList());
     }
-    public List<Adress> getAllAdressSortedByCity (){
+    public List<AdressModel> getAllAdressSortedByCity (){
         return adressRepository.findAll().stream().
                 sorted(Comparator.comparing(Adress::getCity))
+                .map(adress -> modelMapper.map(adress, AdressModel.class))
                 .collect(Collectors.toList());
     }
-    public List<Adress> getAllAdressSortedByState (){
+    public List<AdressModel> getAllAdressSortedByState (){
         return adressRepository.findAll().stream().
                 sorted(Comparator.comparing(Adress::getState))
+                .map(adress -> modelMapper.map(adress, AdressModel.class))
                 .collect(Collectors.toList());
+    }
+    private AdressModel toAdressModel(Adress adress){
+        return modelMapper.map(adress, AdressModel.class);
     }
 
 }

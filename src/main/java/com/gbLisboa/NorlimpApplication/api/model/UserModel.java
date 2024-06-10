@@ -27,7 +27,7 @@ public class UserModel {
 
     private List<Adress> adressList;
 
-    private Login login;
+    private Long login;
 
     private List<Schedule> scheduleList;
 

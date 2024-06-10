@@ -21,47 +21,42 @@ public class LoginController {
 
     private LoginRepository loginRepository;
     private LoginService loginService;
-    private ModelMapper modelMapper;
 
-    @GetMapping("listLogin")
-    public List<LoginModel> findAllLogins (){
-        return loginRepository.findAll()
-                .stream()
-                .map(this::toLoginModel)
-                .collect(Collectors.toList());
+    @GetMapping("/list")
+    public List<LoginModel> findAll (){
+        return loginService.findAllLogins();
     }
     @GetMapping("/{loginId}")
-    public ResponseEntity<LoginModel> findLogin(@PathVariable Long loginId){
-        return loginRepository.findById(loginId)
-                .map(login -> modelMapper.map(login, LoginModel.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public Login registerLogin (@Valid @RequestBody Login login){
-        return loginService.saveLogin(login);
-    }
-    @DeleteMapping("/{loginId}")
-    public ResponseEntity<Void> deleteLogin (@PathVariable Long loginId){
+    public ResponseEntity<LoginModel> find (@PathVariable Long loginId){
         if (!loginRepository.existsById(loginId)){
             return ResponseEntity.notFound().build();
         }
-        loginRepository.deleteById(loginId);
+        LoginModel loginFound = loginService.findLogin(loginId);
+        return ResponseEntity.ok(loginFound);
+    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/create")
+    public ResponseEntity<LoginModel> register (@Valid @RequestBody Login login){
+        LoginModel loginCreated = loginService.saveLogin(login);
+        return ResponseEntity.status(HttpStatus.CREATED).body(loginCreated);
+    }
+    @DeleteMapping("/delete/{loginId}")
+    public ResponseEntity<Void> delete (@PathVariable Long loginId){
+        if (!loginRepository.existsById(loginId)){
+            return ResponseEntity.notFound().build();
+        }
+        loginService.deleteLogin(loginId);
         return ResponseEntity.noContent().build();
     }
-    @PutMapping("/{loginId}")
-    public ResponseEntity<Login> updateLogin (@PathVariable Long loginId,
+    @PutMapping("/update/{loginId}")
+    public ResponseEntity<LoginModel> update (@PathVariable Long loginId,
                                               @Valid @RequestBody Login login){
         if (!loginRepository.existsById(loginId)){
             return ResponseEntity.notFound().build();
         }
         login.setId(loginId);
-        login = loginService.saveLogin(login);
-        return ResponseEntity.ok(login);
+        LoginModel loginUpdate = loginService.updateLogin(loginId, login);
+        return ResponseEntity.ok(loginUpdate);
     }
 
-    private LoginModel toLoginModel(Login login){
-        return modelMapper.map(login, LoginModel.class);
-    }
 }

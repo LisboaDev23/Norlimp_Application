@@ -1,20 +1,37 @@
 package com.gbLisboa.NorlimpApplication.domain.service;
 
+import com.gbLisboa.NorlimpApplication.api.model.UserModel;
 import com.gbLisboa.NorlimpApplication.domain.exception.UserException;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 @AllArgsConstructor
 @Service
 public class UserService {
 
     private UserRepository userRepository;
+    private ModelMapper modelMapper;
 
-    public User findUser(Long userId){
+    public ResponseEntity<UserModel> findUser(Long userId){
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("Usuário não encontrado no banco de dados."));
+                .map(user -> modelMapper.map(user, UserModel.class))
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    public List<UserModel> findAllUsers(){
+        return userRepository.findAll()
+                .stream()
+                .map(this::toUserModel)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -31,5 +48,25 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public UserModel updateUser(User user){
+        UserModel userModel = userRepository.findById(user.getId())
+                .map(u -> modelMapper.map(u, UserModel.class))
+                .orElseThrow(() -> new UserException("Usuário não encontrado!"));
+        userRepository.save(user);
+        return userModel;
+    }
 
+    @Transactional
+    public ResponseEntity<UserModel> deleteUser(Long userId){
+        if (!userRepository.existsById(userId)){
+            return  ResponseEntity.noContent().build();
+        }
+        userRepository.deleteById(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    private UserModel toUserModel (User user){
+        return modelMapper.map(user, UserModel.class);
+    }
 }

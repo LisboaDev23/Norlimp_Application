@@ -1,5 +1,6 @@
 package com.gbLisboa.NorlimpApplication.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.gbLisboa.NorlimpApplication.domain.validation.ValidationGroups;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -24,23 +25,27 @@ public class Service {
     private Long id;
 
     @NotBlank
-    @Column(name = "name_service", nullable = false, unique = true)
+    @Column(name = "name_service", unique = true)
     @Size(min = 4,max = 80)
     private String nameService;
 
     @NotBlank
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
 
     @Valid
     @ConvertGroup(from = Service.class, to = ValidationGroups.TypeId.class)
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "type_id", referencedColumnName = "id")
+    @JsonBackReference
     private Type type;
 
     @Valid
     @ConvertGroup(from = Service.class,to = ValidationGroups.ScheduleId.class)
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "schedule_id", referencedColumnName = "id")
+    @JsonBackReference
     private Schedule schedule;
 }

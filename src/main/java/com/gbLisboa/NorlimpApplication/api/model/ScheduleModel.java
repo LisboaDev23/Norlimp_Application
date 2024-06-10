@@ -17,9 +17,9 @@ public class ScheduleModel {
 
     private List<Date> dates;
 
-    private User user;
+    private Long user;
 
-    private Payment payment;
+    private Long payment;
 
     private List<Service> serviceRequest;
 

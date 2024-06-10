@@ -1,5 +1,6 @@
 package com.gbLisboa.NorlimpApplication.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gbLisboa.NorlimpApplication.domain.validation.ValidationGroups;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -25,14 +26,15 @@ public class Type {
     private Long id;
 
     @NotBlank
-    @Column(name = "name_type", nullable = false, unique = true)
+    @Column(name = "name_type", unique = true)
     @Size(max = 120)
     private String nameType;
 
     @NotBlank
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
 
     @OneToMany(mappedBy = "type")
+    @JsonManagedReference
     private List<Service> serviceList = new ArrayList<>();
 }

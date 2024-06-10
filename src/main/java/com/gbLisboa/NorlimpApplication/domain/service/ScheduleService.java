@@ -1,13 +1,18 @@
 package com.gbLisboa.NorlimpApplication.domain.service;
 
+import com.gbLisboa.NorlimpApplication.api.model.ScheduleModel;
 import com.gbLisboa.NorlimpApplication.domain.exception.ScheduleException;
 import com.gbLisboa.NorlimpApplication.domain.model.Payment;
 import com.gbLisboa.NorlimpApplication.domain.model.Schedule;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.ScheduleRepository;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -16,24 +21,38 @@ public class ScheduleService {
     private ScheduleRepository scheduleRepository;
     private UserService userService;
     private PaymentService paymentService;
+    private ModelMapper modelMapper;
 
-    public Schedule findSchedule(Long scheduleId){
+    public List<ScheduleModel> findAllSchedules (){
+        return scheduleRepository.findAll()
+                .stream()
+                .map(this::toScheduleModel)
+                .collect(Collectors.toList());
+    }
+
+    public ScheduleModel findSchedule(Long scheduleId){
         return scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleException("Agendamento não encontrado no banco de dados!"));
+                .map(this::toScheduleModel)
+                .orElseThrow(() -> new ScheduleException("Agendamento não encontrado!"));
     }
-
     @Transactional
-    public Schedule saveSchedule(Schedule schedule){
-        boolean scheduleIsSave = scheduleRepository.existsById(schedule.getId());
-        if (scheduleIsSave){
-            throw new ScheduleException("Agendamento já cadastrado no banco de dados.");
+    public ScheduleModel saveSchedule(Schedule schedule){
+        scheduleRepository.save(schedule);
+        return modelMapper.map(schedule, ScheduleModel.class);
+    }
+    @Transactional
+    public void deleteSchedule(Long scheduleId){
+        try {
+            scheduleRepository.deleteById(scheduleId);
+        } catch (RuntimeException e){
+            if (!scheduleRepository.existsById(scheduleId)){
+                throw new ScheduleException("Agendamento não encontrado!");
+            }
+            throw new ScheduleException("Agendamento não excluído!");
         }
-        User user = userService.findUser(schedule.getUser().getId());
-        schedule.setUser(user);
-        Payment payment = paymentService.findPayment(schedule.getPayment().getId());
-        schedule.setPayment(payment);
-        return scheduleRepository.save(schedule);
     }
 
-
+    private ScheduleModel toScheduleModel (Schedule schedule){
+        return modelMapper.map(schedule, ScheduleModel.class);
+    }
 }

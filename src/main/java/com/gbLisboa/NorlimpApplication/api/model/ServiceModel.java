@@ -15,9 +15,9 @@ public class ServiceModel {
 
     private String description;
 
-    private Type type;
+    private Long type;
 
-    private Schedule schedule;
+    private Long schedule;
 
 
 }

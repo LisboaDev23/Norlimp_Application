@@ -23,45 +23,40 @@ public class ServiceController {
     private ServiceService serviceService;
     private ModelMapper modelMapper;
 
-    @GetMapping("listServices")
-    public List<ServiceModel> findAllServices(){
-        return serviceRepository.findAll()
-                .stream()
-                .map(this::toServiceModel)
-                .collect(Collectors.toList());
+    @GetMapping("/listServices")
+    public List<ServiceModel> findAll(){
+        return serviceService.findAllServices();
     }
     @GetMapping("/{serviceId}")
-    public ResponseEntity<ServiceModel> findService(@PathVariable Long serviceId){
-        return serviceRepository.findById(serviceId)
-                .map(service -> modelMapper.map(service, ServiceModel.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public Service registerService(@Valid @RequestBody Service service){
-        return serviceService.saveService(service);
-    }
-    @DeleteMapping("/{serviceId}")
-    public ResponseEntity<Void> deleteService(@PathVariable Long serviceId){
+    public ResponseEntity<ServiceModel> find(@PathVariable Long serviceId){
         if (!serviceRepository.existsById(serviceId)){
             return ResponseEntity.notFound().build();
         }
-        serviceRepository.deleteById(serviceId);
+        ServiceModel serviceFound = serviceService.findService(serviceId);
+        return ResponseEntity.ok(serviceFound);
+    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/create")
+    public ResponseEntity<ServiceModel> register(@Valid @RequestBody Service service){
+        ServiceModel serviceCreated = serviceService.saveService(service);
+        return ResponseEntity.status(HttpStatus.CREATED).body(serviceCreated);
+    }
+    @DeleteMapping("/delete/{serviceId}")
+    public ResponseEntity<Void> delete(@PathVariable Long serviceId){
+        if (!serviceRepository.existsById(serviceId)){
+            return ResponseEntity.notFound().build();
+        }
+        serviceService.deleteService(serviceId);
         return ResponseEntity.noContent().build();
     }
-    @PutMapping("/{serviceId}")
-    public ResponseEntity<ServiceModel> updateService(@PathVariable Long serviceId,
+    @PutMapping("/update/{serviceId}")
+    public ResponseEntity<ServiceModel> update(@PathVariable Long serviceId,
                                                       @Valid @RequestBody Service service){
         if (!serviceRepository.existsById(serviceId)){
             return ResponseEntity.notFound().build();
         }
-        service.setId(serviceId);
-        serviceService.saveService(service);
-        return serviceRepository.findById(service.getId())
-                .map(s -> modelMapper.map(s, ServiceModel.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        ServiceModel serviceUpdate = serviceService.updateService(serviceId,service);
+        return ResponseEntity.ok(serviceUpdate);
     }
 
     private ServiceModel toServiceModel(Service service){

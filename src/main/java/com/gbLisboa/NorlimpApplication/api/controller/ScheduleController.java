@@ -21,50 +21,41 @@ public class ScheduleController {
 
     private ScheduleService scheduleService;
     private ScheduleRepository scheduleRepository;
-    private ModelMapper modelMapper;
 
-    @GetMapping("listSchedulles")
-    public List<ScheduleModel> findAllSchedules(){
-        return scheduleRepository.findAll()
-                .stream()
-                .map(this::toScheduleModel)
-                .collect(Collectors.toList());
+    @GetMapping("/listSchedulles")
+    public List<ScheduleModel> findAll(){
+        return scheduleService.findAllSchedules();
     }
     @GetMapping("/{scheduleId}")
-    public ResponseEntity<ScheduleModel> findSchedule(@PathVariable Long scheduleId){
-        return scheduleRepository.findById(scheduleId)
-                .map(schedule -> modelMapper.map(schedule, ScheduleModel.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public Schedule registerSchedule(@Valid @RequestBody Schedule schedule){
-        return scheduleService.saveSchedule(schedule);
-    }
-    @DeleteMapping("/{scheduleId}")
-    public ResponseEntity<Void> deleteSchedule (@PathVariable Long scheduleId){
+    public ResponseEntity<ScheduleModel> find(@PathVariable Long scheduleId){
         if (!scheduleRepository.existsById(scheduleId)){
             return ResponseEntity.notFound().build();
         }
-        scheduleRepository.deleteById(scheduleId);
+        ScheduleModel scheduleFound = scheduleService.findSchedule(scheduleId);
+        return ResponseEntity.ok(scheduleFound);
+    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/create")
+    public ResponseEntity<ScheduleModel> register(@Valid @RequestBody Schedule schedule){
+        ScheduleModel scheduleCreated = scheduleService.saveSchedule(schedule);
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleCreated);
+    }
+    @DeleteMapping("/delete/{scheduleId}")
+    public ResponseEntity<Void> delete (@PathVariable Long scheduleId){
+        if (!scheduleRepository.existsById(scheduleId)){
+            return ResponseEntity.notFound().build();
+        }
+        scheduleService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
     }
-    @PutMapping("/{scheduleId}")
-    public ResponseEntity<ScheduleModel> updateSchedule (@PathVariable Long scheduleId,
+    @PutMapping("/update/{scheduleId}")
+    public ResponseEntity<ScheduleModel> update (@PathVariable Long scheduleId,
                                                          @Valid @RequestBody Schedule schedule){
         if (!scheduleRepository.existsById(scheduleId)){
             return ResponseEntity.notFound().build();
         }
         schedule.setId(scheduleId);
-        scheduleService.saveSchedule(schedule);
-        return scheduleRepository.findById(schedule.getId())
-                .map(s -> modelMapper.map(s, ScheduleModel.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    private ScheduleModel toScheduleModel(Schedule schedule){
-        return modelMapper.map(schedule, ScheduleModel.class);
+        ScheduleModel scheduleUpdate = scheduleService.saveSchedule(schedule);
+        return ResponseEntity.ok(scheduleUpdate);
     }
 }

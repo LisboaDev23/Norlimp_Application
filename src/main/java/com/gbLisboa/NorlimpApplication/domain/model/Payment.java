@@ -1,5 +1,6 @@
 package com.gbLisboa.NorlimpApplication.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gbLisboa.NorlimpApplication.domain.validation.ValidationGroups;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -22,14 +23,16 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     @Column(name = "description")
     private String description;
 
     @NotBlank
-    @Column(name = "value", nullable = false)
+    @Column(name = "value")
     private Double value;
 
     @OneToMany(mappedBy = "payment")
+    @JsonManagedReference
     private List<Schedule> schedulesList;
 
 }

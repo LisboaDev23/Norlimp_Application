@@ -29,12 +29,12 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     @Size(max = 80,min = 12)
     private String name;
 
     @NotBlank
-    @Column(name = "cpf", nullable = false, unique = true, updatable = false)
+    @Column(name = "cpf", unique = true, updatable = false)
     @Size(min = 11,max = 14)
     private String cpf;
 
@@ -48,11 +48,15 @@ public class User {
     private String email;
 
     @NotBlank
-    @Column(name = "telephone", nullable = false)
+    @Column(name = "telephone")
     @Size(max = 14)
     private String telephone;
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private List<Adress> adressList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List<Schedule> scheduleList = new ArrayList<>();
 }

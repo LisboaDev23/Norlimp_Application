@@ -1,40 +1,70 @@
 package com.gbLisboa.NorlimpApplication.domain.service;
 
+import com.gbLisboa.NorlimpApplication.api.model.LoginModel;
 import com.gbLisboa.NorlimpApplication.domain.exception.LoginException;
 import com.gbLisboa.NorlimpApplication.domain.model.Login;
-import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.LoginRepository;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
 public class LoginService {
 
     private LoginRepository loginRepository;
+    private ModelMapper modelMapper;
 
-    public Login findLogin(Long loginId){
+    public List<LoginModel> findAllLogins (){
+        return loginRepository.findAll()
+                .stream()
+                .map(this::toLoginModel)
+                .collect(Collectors.toList());
+    }
+
+    public LoginModel findLogin(Long loginId){
         return loginRepository.findById(loginId)
-                .orElseThrow(() -> new LoginException("Login com id fornecido não encontrado."));
+                .map(this::toLoginModel)
+                .orElseThrow(() -> new LoginException("Login não encontrado"));
     }
     @Transactional
-    public Login saveLogin (Login login){
+    public LoginModel saveLogin (Login login){
         boolean emailInUse = loginRepository.findByEmail(login.getEmail())
                 .filter(l ->!l.equals(login))
                 .isPresent();
         if (emailInUse){
             throw new LoginException("Não foi possível cadastrar um novo login com esse email no banco de dados pois o mesmo já está cadastrado.");
         }
-        return loginRepository.save(login);
+        Login loginCreated = loginRepository.save(login);
+        return modelMapper.map(loginCreated, LoginModel.class);
     }
-
-    public User findUserByLogin (Login login){
-        boolean loginExist = loginRepository.existsById(login.getId());
-        if (!loginExist){
-            throw new LoginException("Login inválido, logo não foi possível encontrar o usuário através do login.");
+    @Transactional
+    public void deleteLogin (Long loginId){
+        try{
+            loginRepository.deleteById(loginId);
+        } catch (RuntimeException e){
+            if (!loginRepository.existsById(loginId)){
+                throw new LoginException("Login não encontrado!");
+            }
+            throw new LoginException("Login não deletado!");
         }
-        return findLogin(login.getId()).getUser();
+    }
+    @Transactional
+    public LoginModel updateLogin(Long loginId,
+                                 Login login){
+        LoginModel loginModel = loginRepository.findById(loginId)
+                .map(l -> modelMapper.map(l, LoginModel.class))
+                .orElseThrow(() -> new LoginException("Login não encontrado!"));
+        loginRepository.save(login);
+        return loginModel;
+    }
+    private LoginModel toLoginModel(Login login){
+        return modelMapper.map(login, LoginModel.class);
     }
 
 }

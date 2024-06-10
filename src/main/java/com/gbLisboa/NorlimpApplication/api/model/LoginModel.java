@@ -16,7 +16,7 @@ public class LoginModel {
 
     private String password;
 
-    private User user;
+    private Long user;
 
 
 }
