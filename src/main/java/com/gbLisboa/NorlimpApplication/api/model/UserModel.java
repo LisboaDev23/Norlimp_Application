@@ -25,11 +25,7 @@ public class UserModel {
 
     private String telephone;
 
-    private List<Adress> adressList;
-
     private Long login;
-
-    private List<Schedule> scheduleList;
 
 
 }

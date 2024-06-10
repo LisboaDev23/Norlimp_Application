@@ -1,6 +1,7 @@
 package com.gbLisboa.NorlimpApplication.api.controller;
 
 import com.gbLisboa.NorlimpApplication.api.model.LoginModel;
+import com.gbLisboa.NorlimpApplication.domain.exception.LoginException;
 import com.gbLisboa.NorlimpApplication.domain.model.Login;
 import com.gbLisboa.NorlimpApplication.domain.repository.LoginRepository;
 import com.gbLisboa.NorlimpApplication.domain.service.LoginService;
@@ -35,9 +36,9 @@ public class LoginController {
         return ResponseEntity.ok(loginFound);
     }
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/create")
-    public ResponseEntity<LoginModel> register (@Valid @RequestBody Login login){
-        LoginModel loginCreated = loginService.saveLogin(login);
+    @PostMapping("/{userId}/create")
+    public ResponseEntity<LoginModel> register (@PathVariable Long userId,@Valid @RequestBody LoginModel loginModel){
+        LoginModel loginCreated = loginService.saveLogin(userId, loginModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(loginCreated);
     }
     @DeleteMapping("/delete/{loginId}")
@@ -49,13 +50,15 @@ public class LoginController {
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/update/{loginId}")
-    public ResponseEntity<LoginModel> update (@PathVariable Long loginId,
-                                              @Valid @RequestBody Login login){
+    public ResponseEntity<LoginModel> update (@PathVariable Long userId,@PathVariable Long loginId,
+                                              @Valid @RequestBody LoginModel loginModel){
         if (!loginRepository.existsById(loginId)){
             return ResponseEntity.notFound().build();
         }
-        login.setId(loginId);
-        LoginModel loginUpdate = loginService.updateLogin(loginId, login);
+        loginRepository.findById(loginId)
+                .orElseThrow(() -> new LoginException("Login não encontrado!"))
+                .setId(loginId);
+        LoginModel loginUpdate = loginService.saveLogin(userId, loginModel);
         return ResponseEntity.ok(loginUpdate);
     }
 

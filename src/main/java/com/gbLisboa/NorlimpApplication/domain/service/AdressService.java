@@ -2,8 +2,11 @@ package com.gbLisboa.NorlimpApplication.domain.service;
 
 import com.gbLisboa.NorlimpApplication.api.model.AdressModel;
 import com.gbLisboa.NorlimpApplication.domain.exception.AdressException;
+import com.gbLisboa.NorlimpApplication.domain.exception.UserException;
 import com.gbLisboa.NorlimpApplication.domain.model.Adress;
+import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.AdressRepository;
+import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,7 @@ import java.util.stream.Collectors;
 public class AdressService {
 
     private AdressRepository adressRepository;
+    private UserRepository userRepository;
     private final ModelMapper modelMapper;
 
     public AdressModel findAdress (Long adressId){
@@ -33,9 +37,20 @@ public class AdressService {
     }
 
     @Transactional
-    public AdressModel saveAdress (Adress adress) {
+    public AdressModel saveAdress (Long userId,AdressModel adressModel) {
         try {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserException("Usuário não encontrado!"));
+            Adress adress = new Adress();
+            adress.setRoad(adressModel.getRoad());
+            adress.setNumber(adressModel.getNumber());
+            adress.setNeighborhood(adressModel.getNeighborhood());
+            adress.setCity(adressModel.getCity());
+            adress.setState(adressModel.getState());
+            adress.setUser(user);
             adressRepository.save(adress);
+            adressModel.setUser(userId);
+            adressModel.setId(adress.getId());
             return modelMapper.map(adress, AdressModel.class);
         } catch (RuntimeException e){
             throw new AdressException("Não foi possível cadastrar o endereço!");

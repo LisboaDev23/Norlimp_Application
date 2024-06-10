@@ -1,8 +1,10 @@
 package com.gbLisboa.NorlimpApplication.api.controller;
 
 import com.gbLisboa.NorlimpApplication.api.model.AdressModel;
+import com.gbLisboa.NorlimpApplication.domain.exception.AdressException;
 import com.gbLisboa.NorlimpApplication.domain.model.Adress;
 import com.gbLisboa.NorlimpApplication.domain.repository.AdressRepository;
+import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import com.gbLisboa.NorlimpApplication.domain.service.AdressService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ public class AdressController {
 
     private AdressService adressService;
     private AdressRepository adressRepository;
+    private UserRepository userRepository;
 
     @GetMapping("/list")
     public List<AdressModel> findAll (){
@@ -35,9 +38,9 @@ public class AdressController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/create")
-    public AdressModel register (@Valid @RequestBody Adress adress){
-        return adressService.saveAdress(adress);
+    @PostMapping("/{userId}/create")
+    public AdressModel register (@PathVariable Long userId,@Valid @RequestBody AdressModel adressModel){
+        return adressService.saveAdress(userId,adressModel);
     }
 
     @DeleteMapping("/delete/{adressId}")
@@ -49,14 +52,16 @@ public class AdressController {
             return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/update/{adressId}")
-    public ResponseEntity<AdressModel> update (@PathVariable Long adressId,
-                                                @Valid @RequestBody Adress adress){
-        if (!adressRepository.existsById(adressId)){
+    @PutMapping("/update/{userId}/{adressId}")
+    public ResponseEntity<AdressModel> update (@PathVariable Long userId,@PathVariable Long adressId,
+                                                @Valid @RequestBody AdressModel adressModel){
+        if (!adressRepository.existsById(adressId) || !userRepository.existsById(userId)){
             return ResponseEntity.notFound().build();
         }
-        adress.setId(adressId);
-        AdressModel adressUpdate = adressService.saveAdress(adress);
+        adressRepository.findById(adressId)
+                .orElseThrow(() -> new AdressException("Endereço não encontrado!"))
+                .setId(adressId);
+        AdressModel adressUpdate = adressService.saveAdress(userId,adressModel);
         return ResponseEntity.ok(adressUpdate);
     }
 

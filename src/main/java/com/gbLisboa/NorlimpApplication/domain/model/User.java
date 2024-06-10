@@ -59,4 +59,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private List<Schedule> scheduleList = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private Login login;
 }
