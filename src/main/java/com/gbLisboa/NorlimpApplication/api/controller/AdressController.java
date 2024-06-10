@@ -29,7 +29,7 @@ public class AdressController {
         return adressRepository.findAll()
                 .stream()
                 .map(this::toAdressModel)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());  
     }
 
     @GetMapping("/{adressId}")

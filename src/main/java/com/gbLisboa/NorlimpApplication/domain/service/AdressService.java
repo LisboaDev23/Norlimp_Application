@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
@@ -29,12 +30,12 @@ public class AdressService {
 
     @Transactional
     public Adress saveAdress (Adress adress) {
-        boolean adressInUse = adressRepository.existsById(adress.getId());
-        if (adressInUse){
-            throw new AdressException("Não foi possível cadastrar este endereço, pois ele já está presente no banco de dados.");
-        }
-        User user = userService.findUser(adress.getUser().getId());
-        adress.setUser(user);
+        //boolean adressInUse = adressRepository.existsById(adress.getId());
+        //if (adressInUse){
+            //throw new AdressException("Não foi possível cadastrar este endereço, pois ele já está presente no banco de dados.");
+        //}
+        //User user = userService.findUser(adress.getUser().getId());
+        //adress.setUser(user);
         return adressRepository.save(adress);
     }
 
@@ -45,9 +46,15 @@ public class AdressService {
         if (!userIsPresent){
             throw new UserException("Usuário não encontrado no banco de dados, logo não é possível encontrar os seus respectivos endereços.");
         }
-        return adressRepository.findAll()
+
+        for (Adress adress : adressListUser){
+            if (adress.getUser().getId().equals(userFoundId)){
+                adressListUser.add(adress);
+            }
+        }
+        return adressListUser
                 .stream()
-                .map(adress -> adress.getUser().getId().equals(userFoundId))
+                .filter(adress -> Objects.equals(adress.getUser().getId(), userFoundId))
                 .collect(Collectors.toList());
     }
 

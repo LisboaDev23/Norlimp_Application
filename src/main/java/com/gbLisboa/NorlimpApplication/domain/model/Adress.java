@@ -1,5 +1,6 @@
 package com.gbLisboa.NorlimpApplication.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.gbLisboa.NorlimpApplication.domain.validation.ValidationGroups;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -50,5 +51,6 @@ public class Adress {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonBackReference
     private User user;
 }

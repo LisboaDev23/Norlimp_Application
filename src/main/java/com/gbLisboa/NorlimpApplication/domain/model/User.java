@@ -1,6 +1,7 @@
 package com.gbLisboa.NorlimpApplication.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gbLisboa.NorlimpApplication.domain.validation.ValidationGroups;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -51,5 +52,7 @@ public class User {
     @Size(max = 14)
     private String telephone;
 
-
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List<Adress> adressList = new ArrayList<>();
 }

@@ -20,7 +20,7 @@ public class AdressModel {
 
     private String state;
 
-    private User user;
+    private Long user;
 
 
 }
