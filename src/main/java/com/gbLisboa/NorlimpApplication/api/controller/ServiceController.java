@@ -21,7 +21,6 @@ public class ServiceController {
 
     private ServiceRepository serviceRepository;
     private ServiceService serviceService;
-    private ModelMapper modelMapper;
 
     @GetMapping("/listServices")
     public List<ServiceModel> findAll(){
@@ -37,9 +36,8 @@ public class ServiceController {
     }
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    public ResponseEntity<ServiceModel> register(@Valid @RequestBody Service service){
-        ServiceModel serviceCreated = serviceService.saveService(service);
-        return ResponseEntity.status(HttpStatus.CREATED).body(serviceCreated);
+    public ServiceModel register(@Valid @RequestBody ServiceModel serviceModel){
+        return serviceService.saveService(serviceModel);
     }
     @DeleteMapping("/delete/{serviceId}")
     public ResponseEntity<Void> delete(@PathVariable Long serviceId){
@@ -51,15 +49,13 @@ public class ServiceController {
     }
     @PutMapping("/update/{serviceId}")
     public ResponseEntity<ServiceModel> update(@PathVariable Long serviceId,
-                                                      @Valid @RequestBody Service service){
+                                                      @Valid @RequestBody ServiceModel serviceModel){
         if (!serviceRepository.existsById(serviceId)){
             return ResponseEntity.notFound().build();
         }
-        ServiceModel serviceUpdate = serviceService.updateService(serviceId,service);
+        ServiceModel serviceUpdate = serviceService.updateService(serviceId,serviceModel);
         return ResponseEntity.ok(serviceUpdate);
     }
 
-    private ServiceModel toServiceModel(Service service){
-        return modelMapper.map(service, ServiceModel.class);
-    }
+
 }

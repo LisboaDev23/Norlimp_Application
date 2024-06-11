@@ -36,9 +36,8 @@ public class ScheduleController {
     }
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    public ResponseEntity<ScheduleModel> register(@Valid @RequestBody Schedule schedule){
-        ScheduleModel scheduleCreated = scheduleService.saveSchedule(schedule);
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleCreated);
+    public ScheduleModel register(@Valid @RequestBody ScheduleModel scheduleModel){
+        return scheduleService.saveSchedule(scheduleModel);
     }
     @DeleteMapping("/delete/{scheduleId}")
     public ResponseEntity<Void> delete (@PathVariable Long scheduleId){
@@ -50,12 +49,11 @@ public class ScheduleController {
     }
     @PutMapping("/update/{scheduleId}")
     public ResponseEntity<ScheduleModel> update (@PathVariable Long scheduleId,
-                                                         @Valid @RequestBody Schedule schedule){
+                                                         @Valid @RequestBody ScheduleModel scheduleModel){
         if (!scheduleRepository.existsById(scheduleId)){
             return ResponseEntity.notFound().build();
         }
-        schedule.setId(scheduleId);
-        ScheduleModel scheduleUpdate = scheduleService.saveSchedule(schedule);
+        ScheduleModel scheduleUpdate = scheduleService.updateSchedule(scheduleId, scheduleModel);
         return ResponseEntity.ok(scheduleUpdate);
     }
 }

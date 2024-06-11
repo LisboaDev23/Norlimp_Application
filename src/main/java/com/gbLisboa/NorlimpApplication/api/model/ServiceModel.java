@@ -19,5 +19,4 @@ public class ServiceModel {
 
     private Long schedule;
 
-
 }

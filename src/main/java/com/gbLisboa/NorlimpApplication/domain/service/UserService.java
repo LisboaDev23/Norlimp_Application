@@ -58,12 +58,15 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<UserModel> deleteUser(Long userId){
-        if (!userRepository.existsById(userId)){
-            return  ResponseEntity.noContent().build();
+    public void deleteUser(Long userId){
+        try {
+            userRepository.deleteById(userId);
+        } catch (RuntimeException e){
+            if (!userRepository.existsById(userId)){
+                throw new UserException("Usuário não encontrado!");
+            }
+            throw new UserException("Usuário não excluído!");
         }
-        userRepository.deleteById(userId);
-        return ResponseEntity.noContent().build();
     }
 
     private UserModel toUserModel (User user){

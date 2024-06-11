@@ -30,16 +30,20 @@ public class UserController {
     }
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    public User registerUser(@Valid @RequestBody User user){
-        return userService.saveUser(user);
+    public User register(@Valid @RequestBody UserModel userModel){
+        return userService.saveUser(userModel);
     }
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<UserModel> delete(@PathVariable Long userId){
-        return userService.deleteUser(userId);
+    public ResponseEntity<UserModel> delete(@PathVariable Long userId) {
+        if (!userRepository.existsById(userId)){
+            return ResponseEntity.notFound().build();
+        }
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
     }
     @PutMapping("/update/{userId}")
     public ResponseEntity<UserModel> update(@PathVariable Long userId,
-                                                @Valid @RequestBody User user){
+                                                @Valid @RequestBody UserModel userModel){
         if (!userRepository.existsById(userId)){
             return ResponseEntity.notFound().build();
         }
@@ -48,6 +52,4 @@ public class UserController {
         UserModel userUpdated = userService.updateUser(user);
         return ResponseEntity.ok(userUpdated);
     }
-
-
 }

@@ -8,8 +8,6 @@ import lombok.Setter;
 @Setter
 public class AdressModel {
 
-    private Long id;
-
     private String road;
 
     private String number;

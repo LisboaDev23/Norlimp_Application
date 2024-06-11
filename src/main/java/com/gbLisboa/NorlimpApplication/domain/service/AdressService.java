@@ -4,6 +4,7 @@ import com.gbLisboa.NorlimpApplication.api.model.AdressModel;
 import com.gbLisboa.NorlimpApplication.domain.exception.AdressException;
 import com.gbLisboa.NorlimpApplication.domain.exception.UserException;
 import com.gbLisboa.NorlimpApplication.domain.model.Adress;
+import com.gbLisboa.NorlimpApplication.domain.model.Login;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.AdressRepository;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
@@ -23,12 +24,6 @@ public class AdressService {
     private UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    public AdressModel findAdress (Long adressId){
-        return adressRepository.findById(adressId)
-                .map(this::toAdressModel)
-                .orElseThrow(() -> new AdressException("Endereço não encontrado!"));
-    }
-
     public List<AdressModel> findAllAdress (){
         return adressRepository.findAll()
                 .stream()
@@ -36,11 +31,17 @@ public class AdressService {
                 .collect(Collectors.toList());
     }
 
+    public AdressModel findAdress (Long adressId){
+        return adressRepository.findById(adressId)
+                .map(this::toAdressModel)
+                .orElseThrow(() -> new AdressException("Endereço não encontrado!"));
+    }
+
     @Transactional
-    public AdressModel saveAdress (Long userId,AdressModel adressModel) {
-        try {
-            User user = userRepository.findById(userId)
+    public AdressModel saveAdress (AdressModel adressModel) {
+            User user = userRepository.findById(adressModel.getUser())
                     .orElseThrow(() -> new UserException("Usuário não encontrado!"));
+
             Adress adress = new Adress();
             adress.setRoad(adressModel.getRoad());
             adress.setNumber(adressModel.getNumber());
@@ -48,13 +49,16 @@ public class AdressService {
             adress.setCity(adressModel.getCity());
             adress.setState(adressModel.getState());
             adress.setUser(user);
-            adressRepository.save(adress);
-            adressModel.setUser(userId);
-            adressModel.setId(adress.getId());
-            return modelMapper.map(adress, AdressModel.class);
-        } catch (RuntimeException e){
-            throw new AdressException("Não foi possível cadastrar o endereço!");
+
+        if (adressModel.getRoad().equals(adress.getRoad())
+                && adressModel.getNeighborhood().equals(adress.getNeighborhood())
+                && adressModel.getNumber().equals(adress.getNumber())
+                && adressModel.getState().equals(adress.getState())
+                && adressModel.getCity().equals(adress.getCity())) {
+            throw new AdressException("Endereço já cadastrado! Revise os dados e tente novamente.");
         }
+            adressRepository.save(adress);
+            return modelMapper.map(adress, AdressModel.class);
     }
 
     @Transactional
@@ -67,6 +71,23 @@ public class AdressService {
             }
             throw new AdressException("Não foi possível excluir o endereço!");
         }
+    }
+
+    @Transactional
+    public AdressModel updateAdress (Long adressId, AdressModel adressModel){
+        Adress adress = adressRepository.findById(adressId)
+                .orElseThrow(() -> new AdressException("Endereço não encontrado!"));
+        User user = userRepository.findById(adressModel.getUser())
+                .orElseThrow(() -> new UserException("Usuário não encontrado!"));
+        adress.setRoad(adressModel.getRoad());
+        adress.setNumber(adressModel.getNumber());
+        adress.setNeighborhood(adressModel.getNeighborhood());
+        adress.setCity(adressModel.getCity());
+        adress.setState(adressModel.getState());
+        adress.setUser(user);
+        adress.setId(adressId);
+        Adress adressUpdate = adressRepository.save(adress);
+        return toAdressModel(adressUpdate);
     }
 
     public List<AdressModel> getAllAdressSortedByRoad (){

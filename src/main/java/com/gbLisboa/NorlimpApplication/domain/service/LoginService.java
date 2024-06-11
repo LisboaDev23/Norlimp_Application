@@ -38,13 +38,13 @@ public class LoginService {
     }
 
     @Transactional
-    public LoginModel saveLogin (Long userId,LoginModel loginModel){
+    public LoginModel saveLogin (LoginModel loginModel){
         if (loginRepository.findByEmail(loginModel.getEmail()).isPresent()){
             throw new LoginException("Email já cadastrado, tente novamente!");
         } else if (loginRepository.findByUsername(loginModel.getUsername()).isPresent()) {
             throw new LoginException("Nome de usuário já cadastrado, tente novamente!");
         }
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(loginModel.getUser())
                 .orElseThrow(() -> new UserException("Usuário não encontrado!"));
         Login login = new Login();
         login.setEmail(loginModel.getEmail());
@@ -52,8 +52,6 @@ public class LoginService {
         login.setPassword(loginModel.getPassword());
         login.setUser(user);
         loginRepository.save(login);
-        loginModel.setId(login.getId());
-        loginModel.setUser(userId);
         return modelMapper.map(login, LoginModel.class);
     }
 
@@ -69,6 +67,27 @@ public class LoginService {
         }
     }
 
+    @Transactional
+    public LoginModel updateLogin (Long loginId, LoginModel loginModel){
+
+        User user = userRepository.findById(loginModel.getUser())
+                .orElseThrow(() -> new UserException("Usuário não encontrado!"));
+        Login login = loginRepository.findById(loginId)
+                .orElseThrow(() -> new LoginException("Login não encontrado com o email"));
+
+        login.setEmail(loginModel.getEmail());
+        if (!login.getUsername().equals(loginModel.getUsername())){
+            if (loginRepository.findByUsername(loginModel.getUsername()).isPresent()){
+                throw new LoginException("Nome de usuário já cadastrado, atualize utilizanod outro nome de usuário!");
+            }
+            login.setUsername(loginModel.getUsername());
+        }
+        login.setPassword(loginModel.getPassword());
+        login.setUser(user);
+        login.setId(loginId);
+        Login loginUpdate = loginRepository.save(login);
+        return toLoginModel(loginUpdate);
+    }
 
     private LoginModel toLoginModel(Login login){
         return modelMapper.map(login, LoginModel.class);

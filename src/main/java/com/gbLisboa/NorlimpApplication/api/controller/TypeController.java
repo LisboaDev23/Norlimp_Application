@@ -24,44 +24,41 @@ public class TypeController {
     private ModelMapper modelMapper;
 
     @GetMapping("listTypes")
-    public List<TypeModel> findAllTypes(){
-        return typeRepository.findAll()
-                .stream()
-                .map(this::toMapModel)
-                .collect(Collectors.toList());
+    public List<TypeModel> findAll(){
+        return typeService.findAllTypes();
     }
-    @GetMapping("/{typeId}")
-    public ResponseEntity<TypeModel> getType(@PathVariable Long typeId){
-        return typeRepository.findById(typeId)
-                .map(type -> modelMapper.map(type, TypeModel.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public Type registerType(@RequestBody Type type){
-        return typeService.saveType(type);
-    }
-    @DeleteMapping("/{typeId}")
-    public ResponseEntity<Void> deleteType(@PathVariable Long typeId){
+
+    @GetMapping("{typeId}")
+    public ResponseEntity<TypeModel> find (@PathVariable Long typeId){
         if (!typeRepository.existsById(typeId)){
             return ResponseEntity.notFound().build();
         }
-        typeRepository.deleteById(typeId);
-        return ResponseEntity.noContent().build();
-    }
-    @PutMapping("/{typeId}")
-    public ResponseEntity<TypeModel> updateService(@PathVariable Long typeId,
-                                                      @Valid @RequestBody Type type){
-        type.setId(typeId);
-        typeService.saveType(type);
-        return typeRepository.findById(type.getId())
-                .map(t -> modelMapper.map(t, TypeModel.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        TypeModel typeFound = typeService.findType(typeId);
+        return ResponseEntity.ok(typeFound);
     }
 
-    private TypeModel toMapModel (Type type){
-        return modelMapper.map(type, TypeModel.class);
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    public TypeModel register(@RequestBody TypeModel typeModel){
+        return typeService.saveType(typeModel);
     }
+    @DeleteMapping("/delete/{typeId}")
+    public ResponseEntity<Void> delete(@PathVariable Long typeId){
+        if (!typeRepository.existsById(typeId)){
+            return ResponseEntity.notFound().build();
+        }
+        typeService.deleteType(typeId);
+        return ResponseEntity.noContent().build();
+    }
+    @PutMapping("/update/{typeId}")
+    public ResponseEntity<TypeModel> update(@PathVariable Long typeId,
+                                                      @Valid @RequestBody TypeModel typeModel){
+        if (!typeRepository.existsById(typeId)){
+            return ResponseEntity.notFound().build();
+        }
+        TypeModel typeUpdate = typeService.updateModel(typeId, typeModel);
+        return ResponseEntity.ok(typeUpdate);
+    }
+
+
 }

@@ -38,9 +38,9 @@ public class AdressController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/{userId}/create")
-    public AdressModel register (@PathVariable Long userId,@Valid @RequestBody AdressModel adressModel){
-        return adressService.saveAdress(userId,adressModel);
+    @PostMapping("/create")
+    public AdressModel register (@Valid @RequestBody AdressModel adressModel){
+        return adressService.saveAdress(adressModel);
     }
 
     @DeleteMapping("/delete/{adressId}")
@@ -52,16 +52,13 @@ public class AdressController {
             return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/update/{userId}/{adressId}")
-    public ResponseEntity<AdressModel> update (@PathVariable Long userId,@PathVariable Long adressId,
+    @PutMapping("/update/{adressId}")
+    public ResponseEntity<AdressModel> update (@PathVariable Long adressId,
                                                 @Valid @RequestBody AdressModel adressModel){
-        if (!adressRepository.existsById(adressId) || !userRepository.existsById(userId)){
+        if (!adressRepository.existsById(adressId)){
             return ResponseEntity.notFound().build();
         }
-        adressRepository.findById(adressId)
-                .orElseThrow(() -> new AdressException("Endereço não encontrado!"))
-                .setId(adressId);
-        AdressModel adressUpdate = adressService.saveAdress(userId,adressModel);
+        AdressModel adressUpdate = adressService.updateAdress(adressId,adressModel);
         return ResponseEntity.ok(adressUpdate);
     }
 

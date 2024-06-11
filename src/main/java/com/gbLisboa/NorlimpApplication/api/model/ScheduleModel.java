@@ -1,8 +1,5 @@
 package com.gbLisboa.NorlimpApplication.api.model;
 
-import com.gbLisboa.NorlimpApplication.domain.model.Payment;
-import com.gbLisboa.NorlimpApplication.domain.model.Service;
-import com.gbLisboa.NorlimpApplication.domain.model.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +18,7 @@ public class ScheduleModel {
 
     private Long payment;
 
-    private List<Service> serviceRequest;
+    private List<ServiceModel> serviceRequest;
 
 
 }

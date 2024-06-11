@@ -21,7 +21,6 @@ public class PaymentController {
 
     private PaymentService paymentService;
     private PaymentRepository paymentRepository;
-    private ModelMapper modelMapper;
 
     @GetMapping("/listPayments")
     public List<PaymentModel> findAll(){
@@ -37,9 +36,8 @@ public class PaymentController {
     }
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    public ResponseEntity<PaymentModel> register(@Valid @RequestBody Payment payment){
-        PaymentModel paymentSaved = paymentService.savePayment(payment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(paymentSaved);
+    public PaymentModel register(@Valid @RequestBody PaymentModel paymentModel){
+        return paymentService.savePayment(paymentModel);
     }
     @DeleteMapping("/delete/{paymentId}")
     public ResponseEntity<Void> delete(@PathVariable Long paymentId){
@@ -51,14 +49,12 @@ public class PaymentController {
     }
     @PutMapping("/update/{paymentId}")
     public ResponseEntity<PaymentModel> update (@PathVariable Long paymentId,
-                                                      @Valid @RequestBody Payment payment){
+                                                      @Valid @RequestBody PaymentModel paymentModel){
         if(!paymentRepository.existsById(paymentId)){
             return ResponseEntity.notFound().build();
         }
-        payment.setId(paymentId);
-        PaymentModel paymentUpdate = paymentService.savePayment(payment);
+        PaymentModel paymentUpdate = paymentService.updatePayment(paymentId,paymentModel);
         return ResponseEntity.ok(paymentUpdate);
     }
-
 
 }

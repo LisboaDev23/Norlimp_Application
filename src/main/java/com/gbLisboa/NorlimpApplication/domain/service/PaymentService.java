@@ -1,6 +1,7 @@
 package com.gbLisboa.NorlimpApplication.domain.service;
 
 import com.gbLisboa.NorlimpApplication.api.model.PaymentModel;
+import com.gbLisboa.NorlimpApplication.api.model.ScheduleModel;
 import com.gbLisboa.NorlimpApplication.domain.exception.PaymentException;
 import com.gbLisboa.NorlimpApplication.domain.model.Payment;
 import com.gbLisboa.NorlimpApplication.domain.model.Schedule;
@@ -34,8 +35,12 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentModel savePayment (Payment payment){
+    public PaymentModel savePayment (PaymentModel paymentModel){
+        Payment payment = new Payment();
+        payment.setDescription(paymentModel.getDescription());
+        payment.setValue(paymentModel.getValue());
         paymentRepository.save(payment);
+
         return modelMapper.map(payment, PaymentModel.class);
     }
     @Transactional
@@ -50,8 +55,20 @@ public class PaymentService {
         }
     }
 
-    public List<Schedule> findSchedulesByPayment (Payment payment){
-        return findPayment(payment.getId()).getSchedulesList();
+    @Transactional
+    public PaymentModel updatePayment (Long paymentId, PaymentModel paymentModel){
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new PaymentException("Pagamento não encontrado!"));
+        payment.setDescription(paymentModel.getDescription());
+        payment.setValue(paymentModel.getValue());
+        payment.setId(paymentId);
+        Payment paymentUpdate = paymentRepository.save(payment);
+        return toPaymentModel(paymentUpdate);
+    }
+    public List<ScheduleModel> findSchedulesByPayment (Long paymentId){
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new PaymentException("Pagamento não encontrado!"));
+        return toPaymentModel(payment).getSchedulesList();
     }
 
     private PaymentModel toPaymentModel(Payment payment){

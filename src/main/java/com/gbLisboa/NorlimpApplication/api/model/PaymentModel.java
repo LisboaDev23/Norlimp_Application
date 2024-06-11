@@ -10,13 +10,11 @@ import java.util.List;
 @Setter
 public class PaymentModel {
 
-    private Long id;
-
     private String description;
 
     private Double value;
 
-    private List<Schedule> schedulesList;
+    private List<ScheduleModel> schedulesList;
 
 
 }
