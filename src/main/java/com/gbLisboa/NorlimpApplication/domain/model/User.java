@@ -38,6 +38,7 @@ public class User {
     @Size(min = 11,max = 14)
     private String cpf;
 
+    @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "birthday", nullable = false)
     private LocalDate birthday;

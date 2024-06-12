@@ -35,26 +35,20 @@ public class UserService {
     }
 
     @Transactional
-    public User saveUser(User user){
-        boolean cpfInUse = userRepository.findByCpf(user.getCpf())
-                .filter(u -> !u.equals(user))
-                .isPresent();
-        boolean emailInUse = userRepository.findByEmail(user.getEmail())
-                .filter(u -> u.equals(user))
-                .isPresent();
+    public UserModel saveUser(UserModel userModel){
+        boolean cpfInUse = userRepository.findByCpf(userModel.getCpf()).isPresent();
+        boolean emailInUse = userRepository.findByEmail(userModel.getEmail()).isPresent();
         if (cpfInUse || emailInUse){
             throw new UserException("Usuário com cpf ou email já cadastrado, tente novamente.");
         }
-        return userRepository.save(user);
-    }
-
-    @Transactional
-    public UserModel updateUser(User user){
-        UserModel userModel = userRepository.findById(user.getId())
-                .map(u -> modelMapper.map(u, UserModel.class))
-                .orElseThrow(() -> new UserException("Usuário não encontrado!"));
-        userRepository.save(user);
-        return userModel;
+        User user = new User();
+        user.setName(userModel.getName());
+        user.setCpf(userModel.getCpf());
+        user.setBirthday(userModel.getBirthday());
+        user.setEmail(userModel.getEmail());
+        user.setTelephone(userModel.getTelephone());
+        User userCreated = userRepository.save(user);
+        return toUserModel(userCreated);
     }
 
     @Transactional
@@ -67,6 +61,35 @@ public class UserService {
             }
             throw new UserException("Usuário não excluído!");
         }
+    }
+
+    @Transactional
+    public UserModel updateUser(Long userId, UserModel userModel){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException("Usuário não encontrado!"));
+        if (!user.getName().equals(userModel.getName())){
+            if (userRepository.findByName(userModel.getName()).isPresent()){
+                throw new UserException("Nome de usuário já cadastrado, atualize com outro nome.");
+            }
+            user.setName(userModel.getName());
+        }
+        if (!user.getCpf().equals(userModel.getCpf())){
+            if (userRepository.findByCpf(userModel.getCpf()).isPresent()){
+                throw new UserException("Cpf já cadastrado, atualize com outro cpf.");
+            }
+            user.setCpf(userModel.getCpf());
+        }
+        user.setBirthday(userModel.getBirthday());
+        if (!user.getEmail().equals(userModel.getEmail())){
+            if (userRepository.findByEmail(userModel.getEmail()).isPresent()){
+                throw new UserException("Email já cadastrado, atualize com outro email.");
+            }
+            user.setEmail(userModel.getEmail());
+        }
+        user.setTelephone(userModel.getTelephone());
+        user.setId(userId);
+        User userUpdate = userRepository.save(user);
+        return toUserModel(userUpdate);
     }
 
     private UserModel toUserModel (User user){

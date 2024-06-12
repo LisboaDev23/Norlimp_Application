@@ -24,17 +24,18 @@ public class UserController {
     public List<UserModel> findAll(){
         return userService.findAllUsers();
     }
+
     @GetMapping("/{userId}")
     public ResponseEntity<UserModel> find(@PathVariable Long userId){
         return userService.findUser(userId);
     }
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    public User register(@Valid @RequestBody UserModel userModel){
+    public UserModel register(@Valid @RequestBody UserModel userModel){
         return userService.saveUser(userModel);
     }
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<UserModel> delete(@PathVariable Long userId) {
+    public ResponseEntity<Void> delete(@PathVariable Long userId) {
         if (!userRepository.existsById(userId)){
             return ResponseEntity.notFound().build();
         }
@@ -47,9 +48,7 @@ public class UserController {
         if (!userRepository.existsById(userId)){
             return ResponseEntity.notFound().build();
         }
-        userService.findUser(userId);
-        user.setId(userId);
-        UserModel userUpdated = userService.updateUser(user);
+        UserModel userUpdated = userService.updateUser(userId,userModel);
         return ResponseEntity.ok(userUpdated);
     }
 }

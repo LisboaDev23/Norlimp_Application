@@ -21,7 +21,6 @@ public class AdressController {
 
     private AdressService adressService;
     private AdressRepository adressRepository;
-    private UserRepository userRepository;
 
     @GetMapping("/list")
     public List<AdressModel> findAll (){
@@ -61,23 +60,5 @@ public class AdressController {
         AdressModel adressUpdate = adressService.updateAdress(adressId,adressModel);
         return ResponseEntity.ok(adressUpdate);
     }
-
-    @GetMapping("/adressSortedRoad")
-    public List<AdressModel> findSortedByRoad(){
-        return adressService.getAllAdressSortedByRoad();
-    }
-    @GetMapping("/adressSortedNeighborhood")
-    public List<AdressModel> findSortedByNeighborhood(){
-        return adressService.getAllAdressSortedByNeighborhood();
-    }
-    @GetMapping("/adressSortedCity")
-    public List<AdressModel> findSortedByCity(){
-        return adressService.getAllAdressSortedByCity();
-    }
-    @GetMapping("/adressSortedRoad")
-    public List<AdressModel> findSortedByState(){
-        return adressService.getAllAdressSortedByState();
-    }
-
 
 }
