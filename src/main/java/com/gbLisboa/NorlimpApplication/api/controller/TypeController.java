@@ -23,7 +23,7 @@ public class TypeController {
     private TypeRepository typeRepository;
     private ModelMapper modelMapper;
 
-    @GetMapping("listTypes")
+    @GetMapping("/list")
     public List<TypeModel> findAll(){
         return typeService.findAllTypes();
     }
@@ -38,10 +38,11 @@ public class TypeController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
+    @PostMapping("/create")
     public TypeModel register(@RequestBody TypeModel typeModel){
         return typeService.saveType(typeModel);
     }
+
     @DeleteMapping("/delete/{typeId}")
     public ResponseEntity<Void> delete(@PathVariable Long typeId){
         if (!typeRepository.existsById(typeId)){

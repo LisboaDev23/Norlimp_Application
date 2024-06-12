@@ -22,7 +22,7 @@ public class PaymentController {
     private PaymentService paymentService;
     private PaymentRepository paymentRepository;
 
-    @GetMapping("/listPayments")
+    @GetMapping("/list")
     public List<PaymentModel> findAll(){
         return paymentService.findAllPayments();
     }

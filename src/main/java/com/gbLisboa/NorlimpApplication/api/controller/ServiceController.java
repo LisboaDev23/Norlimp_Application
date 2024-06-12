@@ -22,7 +22,7 @@ public class ServiceController {
     private ServiceRepository serviceRepository;
     private ServiceService serviceService;
 
-    @GetMapping("/listServices")
+    @GetMapping("/list")
     public List<ServiceModel> findAll(){
         return serviceService.findAllServices();
     }

@@ -22,7 +22,7 @@ public class ScheduleController {
     private ScheduleService scheduleService;
     private ScheduleRepository scheduleRepository;
 
-    @GetMapping("/listSchedulles")
+    @GetMapping("/list")
     public List<ScheduleModel> findAll(){
         return scheduleService.findAllSchedules();
     }
