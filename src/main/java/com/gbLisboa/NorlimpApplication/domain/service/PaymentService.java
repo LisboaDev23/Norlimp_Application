@@ -65,11 +65,6 @@ public class PaymentService {
         Payment paymentUpdate = paymentRepository.save(payment);
         return toPaymentModel(paymentUpdate);
     }
-    public List<ScheduleModel> findSchedulesByPayment (Long paymentId){
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new PaymentException("Pagamento não encontrado!"));
-        return toPaymentModel(payment).getSchedulesList();
-    }
 
     private PaymentModel toPaymentModel(Payment payment){
         return modelMapper.map(payment, PaymentModel.class);

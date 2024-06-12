@@ -10,6 +10,8 @@ import lombok.Setter;
 @Setter
 public class AdressModel {
 
+    private Long id;
+
     @NotBlank(message = "Rua é obrigatória!")
     private String road;
 
@@ -26,7 +28,7 @@ public class AdressModel {
     private String state;
 
     @NotNull
-    private Long user;
+    private UserModel user;
 
 
 }

@@ -12,6 +12,8 @@ import lombok.Setter;
 @Setter
 public class ServiceModel {
 
+    private Long id;
+
     @NotBlank(message = "Nome do serviço é obrigatório!")
     private String nameService;
 
@@ -19,9 +21,9 @@ public class ServiceModel {
     private String description;
 
     @NotNull(message = "Serviço deve ter um id do tipo para referenciar a qual tipo o serviço pertence!")
-    private Long type;
+    private TypeModel type;
 
     @NotNull(message = "Serviço deve ter um id do agendamento para referenciar a qual agendamento o serviço pertence!")
-    private Long schedule;
+    private ScheduleModel schedule;
 
 }

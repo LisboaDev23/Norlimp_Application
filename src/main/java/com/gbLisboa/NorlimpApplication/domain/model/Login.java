@@ -19,7 +19,7 @@ import lombok.*;
 @Table(name = "tb_login")
 public class Login {
 
-    @NotNull
+    @NotNull(groups = ValidationGroups.LoginId.class)
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

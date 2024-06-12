@@ -44,7 +44,7 @@ public class LoginService {
         } else if (loginRepository.findByUsername(loginModel.getUsername()).isPresent()) {
             throw new LoginException("Nome de usuário já cadastrado, tente novamente!");
         }
-        User user = userRepository.findById(loginModel.getUser())
+        User user = userRepository.findById(loginModel.getUser().getId())
                 .orElseThrow(() -> new UserException("Usuário não encontrado!"));
         Login login = new Login();
         login.setEmail(loginModel.getEmail());
@@ -70,7 +70,7 @@ public class LoginService {
     @Transactional
     public LoginModel updateLogin (Long loginId, LoginModel loginModel){
 
-        User user = userRepository.findById(loginModel.getUser())
+        User user = userRepository.findById(loginModel.getUser().getId())
                 .orElseThrow(() -> new UserException("Usuário não encontrado!"));
         Login login = loginRepository.findById(loginId)
                 .orElseThrow(() -> new LoginException("Login não encontrado com o email"));

@@ -1,7 +1,6 @@
 package com.gbLisboa.NorlimpApplication.api.controller;
 
 import com.gbLisboa.NorlimpApplication.api.model.UserModel;
-import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import com.gbLisboa.NorlimpApplication.domain.service.UserService;
 import jakarta.validation.Valid;

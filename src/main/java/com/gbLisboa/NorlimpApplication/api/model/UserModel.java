@@ -14,6 +14,9 @@ import java.util.List;
 @Getter
 @Setter
 public class UserModel {
+
+    private Long id;
+
     @NotBlank(message = "Nome é obrigatório!")
     @Size(min = 10, max = 45,
             message = "Nome deve ter pelo menos 10 caracteres e não pode ultrapassar de 45 caracteres!")

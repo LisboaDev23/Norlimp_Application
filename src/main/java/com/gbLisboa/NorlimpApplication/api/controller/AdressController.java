@@ -1,10 +1,7 @@
 package com.gbLisboa.NorlimpApplication.api.controller;
 
 import com.gbLisboa.NorlimpApplication.api.model.AdressModel;
-import com.gbLisboa.NorlimpApplication.domain.exception.AdressException;
-import com.gbLisboa.NorlimpApplication.domain.model.Adress;
 import com.gbLisboa.NorlimpApplication.domain.repository.AdressRepository;
-import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import com.gbLisboa.NorlimpApplication.domain.service.AdressService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

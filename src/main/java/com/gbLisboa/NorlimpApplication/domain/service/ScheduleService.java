@@ -43,15 +43,16 @@ public class ScheduleService {
     public ScheduleModel saveSchedule(ScheduleModel scheduleModel){
         //um agendamento possui um user de referencia, possui um payment tbm, e um list de serviços
         //mas essa lista não convém adicionar agora pois ela não é obrigatória
-        User user = userRepository.findById(scheduleModel.getUser())
+        User user = userRepository.findById(scheduleModel.getUser().getId())
                 .orElseThrow(() -> new UserException("Usuário não encontrado!"));
-        Payment payment = paymentRepository.findById(scheduleModel.getPayment())
+        Payment payment = paymentRepository.findById(scheduleModel.getPayment().getId())
                 .orElseThrow(() -> new PaymentException("Pagamento não encontrado!"));
         Schedule schedule = new Schedule();
         schedule.setDates(scheduleModel.getDates());
         schedule.setUser(user);
         schedule.setPayment(payment);
         scheduleRepository.save(schedule);
+        user.getScheduleList().add(schedule);
         return modelMapper.map(schedule, ScheduleModel.class);
     }
     @Transactional
@@ -70,9 +71,9 @@ public class ScheduleService {
     public ScheduleModel updateSchedule(Long scheduleId, ScheduleModel scheduleModel){
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleException("Agendamento não encontrado!"));
-        User user = userRepository.findById(scheduleModel.getUser())
+        User user = userRepository.findById(scheduleModel.getUser().getId())
                 .orElseThrow(() -> new UserException("Usuário não encontrado!"));
-        Payment payment = paymentRepository.findById(scheduleModel.getPayment())
+        Payment payment = paymentRepository.findById(scheduleModel.getPayment().getId())
                 .orElseThrow(() -> new PaymentException("Pagamento não encontrado!"));
 
         schedule.setDates(scheduleModel.getDates());

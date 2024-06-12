@@ -8,6 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginModel {
+
+    private Long id;
+
     @NotBlank(message = "Email é obrigatório!")
     @Email(message = "Email deve ser válido!")
     private String email;
@@ -22,6 +25,6 @@ public class LoginModel {
             message ="Senha deve ter pelo menos 8 caracteres e não deve ter mais de 20 caracteres." )
     private String password;
 
-    @NotNull(message = "O id do usuário deve ser informado para saber a qual usuário esse login se refere.")
-    private Long user;
+    @NotNull(message = "O usuário deve ser informado para saber a qual usuário esse login se refere.")
+    private UserModel user;
 }

@@ -12,6 +12,8 @@ import java.util.List;
 @Setter
 public class TypeModel {
 
+    private Long id;
+
     @NotBlank(message = "Nome do tipo é obrigatório!")
     private String nameType;
 

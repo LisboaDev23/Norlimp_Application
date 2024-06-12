@@ -11,13 +11,15 @@ import java.util.List;
 @Setter
 public class ScheduleModel {
 
+    private Long id;
+
     private List<Date> dates;
 
     @NotNull(message = "O agendamento deve ter um id de usuário referenciando a qual usuário pertence esse agendamento!")
-    private Long user;
+    private PaymentModel user;
 
     @NotNull(message = "O agendamento deve ter um id de pagamento referenciando a qual pagamento esse agendamento pertence!")
-    private Long payment;
+    private PaymentModel payment;
 
 
     private List<ServiceModel> serviceRequest;

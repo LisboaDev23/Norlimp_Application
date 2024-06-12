@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @AllArgsConstructor
 @Service
 public class AdressService {
@@ -39,7 +41,7 @@ public class AdressService {
 
     @Transactional
     public AdressModel saveAdress (AdressModel adressModel) {
-            User user = userRepository.findById(adressModel.getUser())
+            User user = userRepository.findById(adressModel.getId())
                     .orElseThrow(() -> new UserException("Usuário não encontrado!"));
 
             Adress adress = new Adress();
@@ -49,15 +51,8 @@ public class AdressService {
             adress.setCity(adressModel.getCity());
             adress.setState(adressModel.getState());
             adress.setUser(user);
-
-        if (adressModel.getRoad().equals(adress.getRoad())
-                && adressModel.getNeighborhood().equals(adress.getNeighborhood())
-                && adressModel.getNumber().equals(adress.getNumber())
-                && adressModel.getState().equals(adress.getState())
-                && adressModel.getCity().equals(adress.getCity())) {
-            throw new AdressException("Endereço já cadastrado! Revise os dados e tente novamente.");
-        }
             adressRepository.save(adress);
+            user.getAdressList().add(adress);
             return modelMapper.map(adress, AdressModel.class);
     }
 
@@ -77,7 +72,7 @@ public class AdressService {
     public AdressModel updateAdress (Long adressId, AdressModel adressModel){
         Adress adress = adressRepository.findById(adressId)
                 .orElseThrow(() -> new AdressException("Endereço não encontrado!"));
-        User user = userRepository.findById(adressModel.getUser())
+        User user = userRepository.findById(adressModel.getId())
                 .orElseThrow(() -> new UserException("Usuário não encontrado!"));
         adress.setRoad(adressModel.getRoad());
         adress.setNumber(adressModel.getNumber());
