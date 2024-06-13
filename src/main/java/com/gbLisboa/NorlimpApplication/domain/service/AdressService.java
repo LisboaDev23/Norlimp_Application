@@ -41,9 +41,10 @@ public class AdressService {
 
     @Transactional
     public AdressModel saveAdress (AdressModel adressModel) {
+        //first, we need find which user this adress is related
             User user = userRepository.findById(adressModel.getId())
                     .orElseThrow(() -> new UserException("Usuário não encontrado!"));
-
+            //set props of the adress entity
             Adress adress = new Adress();
             adress.setRoad(adressModel.getRoad());
             adress.setNumber(adressModel.getNumber());
@@ -52,6 +53,7 @@ public class AdressService {
             adress.setState(adressModel.getState());
             adress.setUser(user);
             adressRepository.save(adress);
+            //after save on the db, we need add this adress on the adressList from user
             user.getAdressList().add(adress);
             return modelMapper.map(adress, AdressModel.class);
     }

@@ -45,18 +45,21 @@ public class ServiceService {
         String nameServiceRequest = serviceRepository.findByNameService(serviceModel.getNameService())
                 .toString();
         boolean nameServiceFoundOnDataBase = serviceRepository.findByNameService(nameServiceRequest).isPresent();
+        //if nameService is present on db, throw new Exception
         if (nameServiceFoundOnDataBase){
             throw new ServiceException("Serviço já se encontra cadastrado no banco de dados.");
         }
         Type type = typeRepository.findById(serviceModel.getType().getId())
                 .orElseThrow(() -> new TypeException("Tipo de serviço não encontrado!"));
 
-        Schedule schedule = scheduleRepository.findById(serviceModel.getSchedule().getId()).get();
+        Schedule schedule = scheduleRepository.findById(serviceModel.getSchedule().getId())
+                .orElseThrow(() -> new ScheduleException("Agendamento não encontrado!"));
 
         com.gbLisboa.NorlimpApplication.domain.model.Service service = new com.gbLisboa.NorlimpApplication.domain.model.Service();
         service.setNameService(serviceModel.getNameService());
         service.setDescription(serviceModel.getDescription());
         service.setType(type);
+        service.setSchedule(schedule);
         serviceRepository.save(service);
         schedule.getServiceRequest().add(service);
         type.getServiceList().add(service);

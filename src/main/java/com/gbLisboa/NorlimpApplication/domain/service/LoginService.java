@@ -52,6 +52,8 @@ public class LoginService {
         login.setPassword(loginModel.getPassword());
         login.setUser(user);
         loginRepository.save(login);
+        //after save on bd, set login from the user
+        user.setLogin(login);
         return modelMapper.map(login, LoginModel.class);
     }
 
@@ -86,6 +88,7 @@ public class LoginService {
         login.setUser(user);
         login.setId(loginId);
         Login loginUpdate = loginRepository.save(login);
+        user.setLogin(loginUpdate);
         return toLoginModel(loginUpdate);
     }
 

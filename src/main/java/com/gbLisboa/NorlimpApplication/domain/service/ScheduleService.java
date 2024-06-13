@@ -45,17 +45,20 @@ public class ScheduleService {
     }
     @Transactional
     public ScheduleModel saveSchedule(ScheduleModel scheduleModel){
-        //um agendamento possui um user de referencia, possui um payment tbm, e um list de serviços
-        //mas essa lista não convém adicionar agora pois ela não é obrigatória
+        //find user - schedule request
         User user = userRepository.findById(scheduleModel.getUser().getId())
                 .orElseThrow(() -> new UserException("Usuário não encontrado!"));
+        //find payment - service request
         Payment payment = paymentRepository.findById(scheduleModel.getPayment().getId())
                 .orElseThrow(() -> new PaymentException("Pagamento não efetuado!"));
+
+        //set props schedule entity
         Schedule schedule = new Schedule();
         schedule.setDates(scheduleModel.getDates());
         schedule.setUser(user);
         schedule.setPayment(payment);
         scheduleRepository.save(schedule);
+        //after save on db, add schedule on the scheduleList - payment and on the scheduleList - user
         payment.getSchedulesList().add(schedule);
         user.getScheduleList().add(schedule);
 

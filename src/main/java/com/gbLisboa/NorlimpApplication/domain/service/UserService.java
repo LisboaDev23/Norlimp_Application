@@ -4,6 +4,8 @@ import com.gbLisboa.NorlimpApplication.api.model.UserModel;
 import com.gbLisboa.NorlimpApplication.domain.exception.UserException;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.AdressRepository;
+import com.gbLisboa.NorlimpApplication.domain.repository.LoginRepository;
+import com.gbLisboa.NorlimpApplication.domain.repository.ScheduleRepository;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,8 +21,11 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private UserRepository userRepository;
-    private final ModelMapper modelMapper;
     private AdressRepository adressRepository;
+    private LoginRepository loginRepository;
+    private ScheduleRepository scheduleRepository;
+    private final ModelMapper modelMapper;
+
 
     public UserModel findUser(Long userId){
         return userRepository.findById(userId)
@@ -57,7 +62,13 @@ public class UserService {
         try {
             User user = userRepository.findById(userId)
                             .orElseThrow(() -> new UserException("Usuário não encontrado!"));
+            //delete all adresses of this user
             user.getAdressList().forEach(adress -> adressRepository.deleteById(adress.getId()));
+            //delete user login
+            loginRepository.deleteById(user.getLogin().getId());
+            //delete all schedules of this user
+            user.getScheduleList().forEach(schedule -> scheduleRepository.deleteById(schedule.getId()));
+            //delete user
             userRepository.deleteById(userId);
         } catch (RuntimeException e){
             if (!userRepository.existsById(userId)){
