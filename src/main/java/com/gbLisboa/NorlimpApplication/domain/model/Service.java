@@ -43,7 +43,6 @@ public class Service {
 
     @Valid
     @ConvertGroup(from = Service.class,to = ValidationGroups.ScheduleId.class)
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "schedule_id", referencedColumnName = "id")
     @JsonBackReference

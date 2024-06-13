@@ -26,7 +26,8 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserModel> find(@PathVariable Long userId){
-        return userService.findUser(userId);
+        UserModel userFound = userService.findUser(userId);
+        return ResponseEntity.ok(userFound);
     }
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")

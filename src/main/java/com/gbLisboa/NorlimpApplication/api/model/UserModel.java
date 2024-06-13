@@ -22,7 +22,7 @@ public class UserModel {
             message = "Nome deve ter pelo menos 10 caracteres e não pode ultrapassar de 45 caracteres!")
     private String name;
 
-    @NotBlank
+    @NotEmpty
     @Size(min = 11,max = 14)
     private String cpf;
 
@@ -30,7 +30,7 @@ public class UserModel {
     @NotNull
     private LocalDate birthday;
 
-    @NotBlank(message = "Email é obrigatório!")
+    @NotNull(message = "Email é obrigatório!")
     @Email(message = "Email deve ser válido!")
     private String email;
 

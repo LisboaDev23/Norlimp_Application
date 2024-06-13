@@ -35,13 +35,12 @@ public class TypeService {
 
     @Transactional
     public TypeModel saveType (TypeModel typeModel){
-        Type type = new Type();
-        type.setNameType(typeModel.getNameType());
-        type.setDescription(typeModel.getDescription());
-        type.setServiceList(typeModel.getServiceList());
         if (typeRepository.findByNameType(typeModel.getNameType()).isPresent()){
             throw new TypeException("Nome do tipo de serviço já cadastrado!");
         }
+        Type type = new Type();
+        type.setNameType(typeModel.getNameType());
+        type.setDescription(typeModel.getDescription());
         typeRepository.save(type);
         return modelMapper.map(type, TypeModel.class);
     }
@@ -69,7 +68,6 @@ public class TypeService {
             type.setNameType(typeModel.getNameType());
         }
         type.setDescription(typeModel.getDescription());
-        type.setServiceList(typeModel.getServiceList());
         type.setId(typeId);
         Type typeUpdate = typeRepository.save(type);
         return toMapModel(typeUpdate);

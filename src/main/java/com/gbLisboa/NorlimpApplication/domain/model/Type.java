@@ -36,5 +36,5 @@ public class Type {
 
     @OneToMany(mappedBy = "type")
     @JsonManagedReference
-    private List<Service> serviceList = new ArrayList<>();
+    private List<Service> serviceList;
 }

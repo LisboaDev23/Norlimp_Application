@@ -18,5 +18,4 @@ public class PaymentModel {
 
     @NotNull(message = "Insira o valor do pagamento, ele não deve ser nulo!")
     private Double value;
-
 }

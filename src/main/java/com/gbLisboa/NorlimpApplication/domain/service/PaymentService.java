@@ -6,6 +6,7 @@ import com.gbLisboa.NorlimpApplication.domain.exception.PaymentException;
 import com.gbLisboa.NorlimpApplication.domain.model.Payment;
 import com.gbLisboa.NorlimpApplication.domain.model.Schedule;
 import com.gbLisboa.NorlimpApplication.domain.repository.PaymentRepository;
+import com.gbLisboa.NorlimpApplication.domain.repository.ScheduleRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class PaymentService {
 
     private PaymentRepository paymentRepository;
+    private ScheduleRepository scheduleRepository;
     private ModelMapper modelMapper;
 
     public List<PaymentModel> findAllPayments(){
@@ -40,7 +42,6 @@ public class PaymentService {
         payment.setDescription(paymentModel.getDescription());
         payment.setValue(paymentModel.getValue());
         paymentRepository.save(payment);
-
         return modelMapper.map(payment, PaymentModel.class);
     }
     @Transactional

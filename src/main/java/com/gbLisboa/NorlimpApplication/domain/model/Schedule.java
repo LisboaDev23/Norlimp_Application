@@ -45,12 +45,11 @@ public class Schedule {
     @ConvertGroup(to = ValidationGroups.PaymentId.class)
     @ManyToOne
     @JoinColumn(name = "payment_id", referencedColumnName = "id")
-    @NotNull
     @JsonBackReference
     private Payment payment;
 
     @OneToMany(mappedBy = "schedule")
     @JsonManagedReference
-    private List<Service> serviceRequest = new ArrayList<>();
+    private List<Service> serviceRequest;
 
 }

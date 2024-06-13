@@ -1,7 +1,5 @@
 package com.gbLisboa.NorlimpApplication.api.model;
 
-import com.gbLisboa.NorlimpApplication.domain.model.Schedule;
-import com.gbLisboa.NorlimpApplication.domain.model.Type;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,10 +18,9 @@ public class ServiceModel {
     @Size(max = 255)
     private String description;
 
-    @NotNull(message = "Serviço deve ter um id do tipo para referenciar a qual tipo o serviço pertence!")
+    @NotNull(message = "Serviço deve ter um tipo para ser classificado!")
     private TypeModel type;
 
-    @NotNull(message = "Serviço deve ter um id do agendamento para referenciar a qual agendamento o serviço pertence!")
     private ScheduleModel schedule;
 
 }

@@ -48,19 +48,17 @@ public class ServiceService {
         if (nameServiceFoundOnDataBase){
             throw new ServiceException("Serviço já se encontra cadastrado no banco de dados.");
         }
-
         Type type = typeRepository.findById(serviceModel.getType().getId())
                 .orElseThrow(() -> new TypeException("Tipo de serviço não encontrado!"));
 
-        Schedule schedule = scheduleRepository.findById(serviceModel.getSchedule().getId())
-                .orElseThrow(() -> new ScheduleException("Agendamento não encontrado!!"));
+        Schedule schedule = scheduleRepository.findById(serviceModel.getSchedule().getId()).get();
 
         com.gbLisboa.NorlimpApplication.domain.model.Service service = new com.gbLisboa.NorlimpApplication.domain.model.Service();
         service.setNameService(serviceModel.getNameService());
         service.setDescription(serviceModel.getDescription());
         service.setType(type);
-        service.setSchedule(schedule);
         serviceRepository.save(service);
+        schedule.getServiceRequest().add(service);
         type.getServiceList().add(service);
         return modelMapper.map(service, ServiceModel.class);
     }

@@ -19,8 +19,4 @@ public class TypeModel {
 
     @Size(max = 255)
     private String description;
-
-    private List<Service> serviceList;
-
-
 }

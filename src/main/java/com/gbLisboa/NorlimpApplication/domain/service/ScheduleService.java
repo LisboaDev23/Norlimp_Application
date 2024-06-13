@@ -1,5 +1,6 @@
 package com.gbLisboa.NorlimpApplication.domain.service;
 
+import com.gbLisboa.NorlimpApplication.api.model.PaymentModel;
 import com.gbLisboa.NorlimpApplication.api.model.ScheduleModel;
 import com.gbLisboa.NorlimpApplication.domain.exception.PaymentException;
 import com.gbLisboa.NorlimpApplication.domain.exception.ScheduleException;
@@ -9,12 +10,14 @@ import com.gbLisboa.NorlimpApplication.domain.model.Schedule;
 import com.gbLisboa.NorlimpApplication.domain.model.User;
 import com.gbLisboa.NorlimpApplication.domain.repository.PaymentRepository;
 import com.gbLisboa.NorlimpApplication.domain.repository.ScheduleRepository;
+import com.gbLisboa.NorlimpApplication.domain.repository.ServiceRepository;
 import com.gbLisboa.NorlimpApplication.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,7 @@ public class ScheduleService {
     private ScheduleRepository scheduleRepository;
     private UserRepository userRepository;
     private PaymentRepository paymentRepository;
+    private ServiceRepository serviceRepository;
     private ModelMapper modelMapper;
 
     public List<ScheduleModel> findAllSchedules (){
@@ -46,13 +50,15 @@ public class ScheduleService {
         User user = userRepository.findById(scheduleModel.getUser().getId())
                 .orElseThrow(() -> new UserException("Usuário não encontrado!"));
         Payment payment = paymentRepository.findById(scheduleModel.getPayment().getId())
-                .orElseThrow(() -> new PaymentException("Pagamento não encontrado!"));
+                .orElseThrow(() -> new PaymentException("Pagamento não efetuado!"));
         Schedule schedule = new Schedule();
         schedule.setDates(scheduleModel.getDates());
         schedule.setUser(user);
         schedule.setPayment(payment);
         scheduleRepository.save(schedule);
+        payment.getSchedulesList().add(schedule);
         user.getScheduleList().add(schedule);
+
         return modelMapper.map(schedule, ScheduleModel.class);
     }
     @Transactional
@@ -73,12 +79,9 @@ public class ScheduleService {
                 .orElseThrow(() -> new ScheduleException("Agendamento não encontrado!"));
         User user = userRepository.findById(scheduleModel.getUser().getId())
                 .orElseThrow(() -> new UserException("Usuário não encontrado!"));
-        Payment payment = paymentRepository.findById(scheduleModel.getPayment().getId())
-                .orElseThrow(() -> new PaymentException("Pagamento não encontrado!"));
 
         schedule.setDates(scheduleModel.getDates());
         schedule.setUser(user);
-        schedule.setPayment(payment);
         schedule.setId(scheduleId);
         Schedule scheduleUpdate = scheduleRepository.save(schedule);
         return toScheduleModel(scheduleUpdate);
